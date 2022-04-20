@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.b3.healthtech.blackbird.blbaggregator.exception.TemplateNotFoundException;
-import se.b3.healthtech.blackbird.blbaggregator.template.Template;
+import se.b3.healthtech.blackbird.blbaggregator.template.exception.TemplateNotFoundException;
+import se.b3.healthtech.blackbird.blbaggregator.template.model.Template;
 
 import java.util.HashMap;
 

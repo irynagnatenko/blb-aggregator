@@ -4,8 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.Data;
 import se.b3.healthtech.blackbird.blbaggregator.enums.ContentType;
 
-import java.time.LocalDateTime;
-
 @Data
 @DynamoDBTable(tableName = "ContainerObjects")
 public class ContainerObjects {
@@ -19,10 +17,10 @@ public class ContainerObjects {
     private String versionKey;
 
     @DynamoDBAttribute
-    private String creator;
+    private String userName;
 
     @DynamoDBAttribute
-    private LocalDateTime created;
+    private long created;
 
     @DynamoDBAttribute
     private ContentType contentType;

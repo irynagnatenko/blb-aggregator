@@ -4,7 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.Data;
 import se.b3.healthtech.blackbird.blbaggregator.enums.ContentType;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -23,14 +22,14 @@ public class Composition {
     private String contentText;
 
     @DynamoDBAttribute
-    private String creator;
+    private String userName;
 
     @DynamoDBAttribute
-    private LocalDateTime created;
+    private long created;
 
     @DynamoDBAttribute
     private ContentType contentType;
 
-    public List<Container> containerIdList;
+    public List<String> templateContainerList;
 
 }

@@ -1,4 +1,4 @@
-package se.b3.healthtech.blackbird.blbaggregator.template;
+package se.b3.healthtech.blackbird.blbaggregator.template.model;
 
 import lombok.Data;
 import se.b3.healthtech.blackbird.blbaggregator.enums.CompositionType;
@@ -10,11 +10,10 @@ import java.util.List;
 public class Template {
 
     private String id;
-    private String name;
+    private String textName;
     private CompositionType compositionType;
     private ContentType contentType;
     private List<TemplateContainer> templateContainerList;
-
 
 
 }

@@ -1,0 +1,201 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8086",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api-birdspecies/publication/": {
+      "post": {
+        "tags": [
+          "publication-controller"
+        ],
+        "summary": "Create a new publication",
+        "operationId": "createPublication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePublicationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created publication"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Container": {
+        "required": [
+          "commitNumber",
+          "containerObjectsList",
+          "contentType",
+          "created",
+          "createdBy",
+          "ordinal",
+          "uuid",
+          "versionNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "ordinal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "H1",
+              "H2",
+              "H3",
+              "CONTENT"
+            ]
+          },
+          "containerObjectsList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ContainerObject": {
+        "required": [
+          "commitNumber",
+          "contentType",
+          "created",
+          "createdBy",
+          "ordinal",
+          "uuid",
+          "versionNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "ordinal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "H1",
+              "H2",
+              "H3",
+              "CONTENT"
+            ]
+          }
+        }
+      },
+      "CreatePublicationRequest": {
+        "type": "object",
+        "properties": {
+          "publication": {
+            "$ref": "#/components/schemas/Publication"
+          },
+          "containerList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Container"
+            }
+          },
+          "containerObjectList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerObject"
+            }
+          }
+        }
+      },
+      "Publication": {
+        "required": [
+          "containersIdList",
+          "created",
+          "createdBy",
+          "templateId",
+          "title",
+          "uuid"
+        ],
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "templateId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "containersIdList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
