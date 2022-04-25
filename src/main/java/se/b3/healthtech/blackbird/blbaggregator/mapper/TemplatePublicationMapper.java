@@ -9,6 +9,7 @@ import se.b3.healthtech.blackbird.blbaggregator.template.model.TemplateContainer
 import se.b3.healthtech.blackbird.blbaggregator.template.model.TemplateContainerObject;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -26,8 +27,8 @@ public abstract class TemplatePublicationMapper {
         return value.getId();
     }
 
-    public Publication mapToPublication(Template source, long created, String userName,
-                                 String uuid, String title) {
+    public Publication mapTemplateToPublication(Template source, long created, String userName,
+                                                String uuid, String title) {
 
         Publication target = new Publication();
 
@@ -41,16 +42,14 @@ public abstract class TemplatePublicationMapper {
         return target;
     }
 
-    public Container mapToContainer(TemplateContainer source, long created, String userName) {
+    public Container mapTemplateContainerToContainer(TemplateContainer source, long created, String userName) {
 
         Container targetContainer = new Container();
 
         if (source != null) {
-            targetContainer.setUuid(source.getId());
-            // container.setContentText
+            targetContainer.setUuid(UUID.randomUUID().toString());
             targetContainer.setCreated(created);
             targetContainer.setOrdinal(source.getOrdinal());
-            // targetContainer.setContentType(source.getContentType());
             targetContainer.setContainerObjectsList(getContainerObjectsList(source.getTemplateContainerObjectList()));
 
         }
@@ -64,16 +63,14 @@ public abstract class TemplatePublicationMapper {
     }
 
 
-    public ContainerObject mapToContainerObject(TemplateContainerObject source, long created, String userName) {
+    public ContainerObject mapTemplateContainerObjectToContainerObject(TemplateContainerObject source, long created, String userName) {
 
         ContainerObject targetContainerObject = new ContainerObject();
 
         if (source != null) {
-            targetContainerObject.setUuid(source.getId());
-            // container.setContentText
+            targetContainerObject.setUuid(UUID.randomUUID().toString());
             targetContainerObject.setCreated(created);
             targetContainerObject.setOrdinal(source.getOrdinal());
-            // targetContainerObject.setContentType(source.getContentType());
 
         }
         if (userName != null) {
@@ -88,13 +85,13 @@ public abstract class TemplatePublicationMapper {
 
     public List<Container> mapToContainerList(List<TemplateContainer> templateContainerList, long created, String userName) {
         return templateContainerList.stream()
-                .map((TemplateContainer source) -> mapToContainer(source, created, userName)).collect(Collectors.toList());
+                .map((TemplateContainer source) -> mapTemplateContainerToContainer(source, created, userName)).collect(Collectors.toList());
 
     }
 
 
     public List<ContainerObject> mapToContainerObjectList(List<TemplateContainerObject> containerObjectList, long created, String userName) {
         return containerObjectList.stream()
-                .map((TemplateContainerObject source) -> mapToContainerObject(source, created, userName)).collect(Collectors.toList());
+                .map((TemplateContainerObject source) -> mapTemplateContainerObjectToContainerObject(source, created, userName)).collect(Collectors.toList());
     }
 }

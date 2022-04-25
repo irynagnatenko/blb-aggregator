@@ -43,7 +43,7 @@ public class PublicationService {
     }
 
     Publication createPublication(Template template, String userName, String title) {
-        return mapper.mapToPublication(template, 1000L, userName,
+        return mapper.mapTemplateToPublication(template, 1000L, userName,
                 UUID.randomUUID().toString(), title);
     }
 
@@ -55,6 +55,7 @@ public class PublicationService {
 
         containerList.forEach(c -> {
             c.setUuid(UUID.randomUUID().toString());
+            // sätta commitNr och
             publication.getContainersIdList().add(c.getUuid());
         });
 

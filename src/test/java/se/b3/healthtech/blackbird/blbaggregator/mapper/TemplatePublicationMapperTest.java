@@ -1,45 +1,121 @@
-package se.b3.healthtech.blackbird.blbaggregator.template.configuration;
+package se.b3.healthtech.blackbird.blbaggregator.mapper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
+import se.b3.healthtech.blackbird.blbaggregator.domain.composite.ContainerObject;
+import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Publication;
+import se.b3.healthtech.blackbird.blbaggregator.enums.CompositionType;
 import se.b3.healthtech.blackbird.blbaggregator.enums.ContentType;
 import se.b3.healthtech.blackbird.blbaggregator.template.model.Template;
 import se.b3.healthtech.blackbird.blbaggregator.template.model.TemplateContainer;
 import se.b3.healthtech.blackbird.blbaggregator.template.model.TemplateContainerObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static se.b3.healthtech.blackbird.blbaggregator.enums.CompositionType.*;
 
+class TemplatePublicationMapperTest {
 
-@Configuration
-public class TemplateConfiguration {
+    private TemplatePublicationMapper mapper = Mappers.getMapper(TemplatePublicationMapper.class);
 
-    Logger logger = LoggerFactory.getLogger(TemplateConfiguration.class);
+    private final String templateId = "1";
+    private final String title = "Bird";
+    private final int templateOrdinal = 1;
+    private final String userName = "userName";
+    private final int versionNumber = 1;
+    private final int commitNumber = 1;
+    private final long created = 10000L;
 
-    public Template createTemplate() {
+
+    @Test
+    void mapTemplateToPublication() {
+        String uuid = UUID.randomUUID().toString();
 
         Template template = new Template();
-        logger.info("Creating a template");
-        template.setId(UUID.randomUUID().toString());
-        template.setTextName("ArtFakta");
-        template.setContentType(ContentType.CONTENT);
-        template.setCompositionType(COMPOSITION);
-        template.setTemplateContainerList(createTemplateContainer());
-        logger.info(template.toString());
 
-        return template;
+        template.setId(templateId);
+        template.setTextName(title);
+        template.setCompositionType(CompositionType.COMPOSITION);
+        template.setContentType(ContentType.CONTENT);
+        template.setTemplateContainerList(createTemplateContainer());
+
+        Publication publication = mapper.mapTemplateToPublication(template, created, userName, uuid, title);
+
+        assertEquals(uuid, publication.getUuid());
+        assertEquals(template.getId(), publication.getTemplateId());
+        assertEquals(template.getTextName(), publication.getTitle());
+        assertEquals(userName, publication.getCreatedBy());
+        assertEquals(created, publication.getCreated());
+        assertEquals(template.getTemplateContainerList().size(), publication.getContainersIdList().size());
+
+        List<String> idList = publication.getContainersIdList();
+        idList.forEach(Assertions::assertNotNull);
 
     }
 
-    public List<TemplateContainer> createTemplateContainer() {
+    @Test
+    void mapTemplateContainerToContainer() {
 
+        TemplateContainer templateContainer = new TemplateContainer();
+
+        templateContainer.setId(templateId);
+        templateContainer.setTextName(title);
+        templateContainer.setCreator(userName);
+        templateContainer.setCreated(created);
+        templateContainer.setOrdinal(templateOrdinal);
+        templateContainer.setCompositionType(CompositionType.CONTAINER);
+        templateContainer.setContentType(ContentType.H2);
+        templateContainer.setTemplateContainerObjectList(createTemplateContainerObject());
+
+        Container container = mapper.mapTemplateContainerToContainer(templateContainer, created, userName);
+
+        assertEquals(templateContainer.getOrdinal(), container.getOrdinal());
+        assertEquals(templateContainer.getCreator(), container.getCreatedBy());
+        assertEquals(templateContainer.getCreated(), container.getCreated());
+        assertEquals(templateContainer.getTemplateContainerObjectList().size(), container.getContainerObjectsList().size());
+
+        assertEquals(commitNumber, container.getCommitNumber());
+        assertEquals(versionNumber, container.getVersionNumber());
+
+        List<String> idList = container.getContainerObjectsList();
+        idList.forEach(Assertions::assertNotNull);
+
+    }
+
+
+    @Test
+    void mapTemplateContainerObjectToContainerObject() {
+
+        TemplateContainerObject templateContainerObject = new TemplateContainerObject();
+
+        templateContainerObject.setId(templateId);
+        templateContainerObject.setTextName(title);
+        templateContainerObject.setCreator(userName);
+        templateContainerObject.setCreated(created);
+        templateContainerObject.setOrdinal(templateOrdinal);
+        templateContainerObject.setCompositionType(CompositionType.CONTAINER_OBJECT);
+        templateContainerObject.setContentType(ContentType.H3);
+
+        ContainerObject containerObject = mapper.mapTemplateContainerObjectToContainerObject(templateContainerObject, created, userName);
+
+        assertEquals(templateContainerObject.getOrdinal(), containerObject.getOrdinal());
+        assertEquals(templateContainerObject.getCreator(), containerObject.getCreatedBy());
+        assertEquals(templateContainerObject.getCreated(), containerObject.getCreated());
+
+        assertEquals(commitNumber, containerObject.getCommitNumber());
+        assertEquals(versionNumber, containerObject.getVersionNumber());
+
+    }
+
+    private List<TemplateContainer> createTemplateContainer() {
         List<TemplateContainer> templateContainerList = new ArrayList<>();
 
         TemplateContainer templateContainer1 = new TemplateContainer();
-        logger.info("Creating a template container 1");
         templateContainer1.setId(UUID.randomUUID().toString());
         templateContainer1.setTextName("Taxoninformation");
         templateContainer1.setCreator("Iryna");
@@ -50,7 +126,6 @@ public class TemplateConfiguration {
         templateContainer1.setTemplateContainerObjectList(null);
 
         TemplateContainer templateContainer2 = new TemplateContainer();
-        logger.info("Creating a template container 2");
         templateContainer2.setId(UUID.randomUUID().toString());
         templateContainer2.setTextName("Utseende och läte");
         templateContainer2.setCreator("Iryna");
@@ -61,7 +136,6 @@ public class TemplateConfiguration {
         templateContainer2.setTemplateContainerObjectList(createTemplateContainerObject());
 
         TemplateContainer templateContainer3 = new TemplateContainer();
-        logger.info("Creating a template container 3");
         templateContainer3.setId(UUID.randomUUID().toString());
         templateContainer3.setTextName("Systematik");
         templateContainer3.setCreator("Iryna");
@@ -72,7 +146,6 @@ public class TemplateConfiguration {
         templateContainer3.setTemplateContainerObjectList(null);
 
         TemplateContainer templateContainer4 = new TemplateContainer();
-        logger.info("Creating a template container 4");
         templateContainer4.setId(UUID.randomUUID().toString());
         templateContainer4.setTextName("Ekologi");
         templateContainer4.setCreator("Iryna");
@@ -83,7 +156,6 @@ public class TemplateConfiguration {
         templateContainer4.setTemplateContainerObjectList(createTemplateContainerObject());
 
         TemplateContainer templateContainer5 = new TemplateContainer();
-        logger.info("Creating a template container 5");
         templateContainer5.setId(UUID.randomUUID().toString());
         templateContainer5.setTextName("Relation till människa");
         templateContainer5.setCreator("Iryna");
@@ -104,13 +176,11 @@ public class TemplateConfiguration {
         return templateContainerList;
     }
 
-
     public List<TemplateContainerObject> createTemplateContainerObject() {
 
         List<TemplateContainerObject> templateContainerObjectList = new ArrayList<>();
 
         TemplateContainerObject templateContainerObject1 = new TemplateContainerObject();
-        logger.info("Creating a template container object 1");
         templateContainerObject1.setId(UUID.randomUUID().toString());
         templateContainerObject1.setTextName("Utbredning i Sverige");
         templateContainerObject1.setCreator("Iryna");
@@ -120,7 +190,6 @@ public class TemplateConfiguration {
         templateContainerObject1.setCompositionType(CONTAINER_OBJECT);
 
         TemplateContainerObject templateContainerObject2 = new TemplateContainerObject();
-        logger.info("Creating a template container object 2");
         templateContainerObject2.setId(UUID.randomUUID().toString());
         templateContainerObject2.setTextName("Föda");
         templateContainerObject2.setCreator("Iryna");
@@ -130,7 +199,6 @@ public class TemplateConfiguration {
         templateContainerObject2.setCompositionType(CONTAINER_OBJECT);
 
         TemplateContainerObject templateContainerObject3 = new TemplateContainerObject();
-        logger.info("Creating a template container object 3");
         templateContainerObject3.setId(UUID.randomUUID().toString());
         templateContainerObject3.setCreator("Iryna");
         templateContainerObject3.setCreated(1000L);
@@ -140,7 +208,6 @@ public class TemplateConfiguration {
         templateContainerObject3.setCompositionType(CONTAINER_OBJECT);
 
         TemplateContainerObject templateContainerObject4 = new TemplateContainerObject();
-        logger.info("Creating a template container object 4");
         templateContainerObject4.setId(UUID.randomUUID().toString());
         templateContainerObject4.setTextName("Populationsutveckling, status och hot");
         templateContainerObject4.setCreator("Iryna");
@@ -150,7 +217,6 @@ public class TemplateConfiguration {
         templateContainerObject4.setCompositionType(CONTAINER_OBJECT);
 
         TemplateContainerObject templateContainerObject5 = new TemplateContainerObject();
-        logger.info("Creating a template container object 5");
         templateContainerObject5.setId(UUID.randomUUID().toString());
         templateContainerObject5.setTextName("Folktro");
         templateContainerObject5.setCreator("Iryna");
@@ -160,7 +226,6 @@ public class TemplateConfiguration {
         templateContainerObject5.setCompositionType(CONTAINER_OBJECT);
 
         TemplateContainerObject templateContainerObject6 = new TemplateContainerObject();
-        logger.info("Creating a template container object 6");
         templateContainerObject6.setId(UUID.randomUUID().toString());
         templateContainerObject6.setTextName("Namn");
         templateContainerObject6.setCreator("Iryna");
@@ -181,18 +246,5 @@ public class TemplateConfiguration {
         return templateContainerObjectList;
     }
 
-    @Bean("templateHashMap")
-    public HashMap<String, Template> templateHashMap() {
-
-        logger.info("Creating HashMap");
-        HashMap<String, Template> templateHashmap = new HashMap<String, Template>();
-        templateHashmap.put("1", createTemplate());
-
-        return templateHashmap;
-
-    }
-
 
 }
-
-
