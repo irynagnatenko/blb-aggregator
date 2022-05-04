@@ -1,4 +1,4 @@
-package se.b3.healthtech.blackbird.blbaggregator.controller;
+package se.b3.healthtech.blackbird.blbaggregator.api;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

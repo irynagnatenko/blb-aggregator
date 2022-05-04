@@ -163,15 +163,32 @@
       },
       "Publication": {
         "required": [
+          "commitNumber",
           "containersIdList",
           "created",
           "createdBy",
           "templateId",
           "title",
-          "uuid"
+          "uuid",
+          "versionNumber"
         ],
         "type": "object",
         "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
           "uuid": {
             "type": "string"
           },
@@ -180,13 +197,6 @@
           },
           "title": {
             "type": "string"
-          },
-          "createdBy": {
-            "type": "string"
-          },
-          "created": {
-            "type": "integer",
-            "format": "int64"
           },
           "containersIdList": {
             "type": "array",

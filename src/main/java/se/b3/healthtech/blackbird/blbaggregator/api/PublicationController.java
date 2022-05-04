@@ -1,7 +1,8 @@
-package se.b3.healthtech.blackbird.blbaggregator.controller;
+package se.b3.healthtech.blackbird.blbaggregator.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.Data;
@@ -16,9 +17,15 @@ public class PublicationController {
 
     private PublicationService publicationService;
 
+    public PublicationController(PublicationService publicationService) {
+        this.publicationService = publicationService;
+    }
+
     @Operation(summary = "Create a publication from template")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully created publication", content = {@Content}),
+            @ApiResponse(responseCode = "200", description = "Successful created publication by templateId",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) }),
             @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})   })
     @PostMapping(path= "/",
@@ -30,7 +37,7 @@ public class PublicationController {
                                     @RequestParam String templateId,
                                     @RequestParam String title) {
         publicationService.createPublication(userName, templateId, title);
-        return null;
+        return "hej";
     }
 
 }
