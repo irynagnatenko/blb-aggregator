@@ -1,11 +1,12 @@
 package se.b3.healthtech.blackbird.blbaggregator.integration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.CreatePublicationRequest;
 
+@Slf4j
 @Service
 public class WebClientImplementation {
 
@@ -16,7 +17,7 @@ public class WebClientImplementation {
     }
 
     public String postPublication(CreatePublicationRequest request) {
-
+        log.info("Innan anrop: {}", request.getContainerList().size());
         String result =  webClient.post()
                 .uri("/api-birdspecies/publication/")
                 .body(Mono.just(request), CreatePublicationRequest.class)
@@ -28,33 +29,6 @@ public class WebClientImplementation {
         return result;
 
     }
-
-/*
-        WebClient.UriSpec<WebClient.RequestBodySpec> uriSpec = webClient.post();
-        WebClient.RequestBodySpec bodySpec = uriSpec.uri(
-                uriBuilder -> uriBuilder.pathSegment("/api-birdspecies/publication/").build());
-
-
- */
-
-
-/*
-    public void postPublication2(CreatePublicationRequest createPublicationRequest) {
-
-        WebClient webClient = WebClient.create("http://localhost:8086");
-
-        Mono<String> postResponse = webClient.post()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/api-birdspecies/publication/")
-                        .build()
-                        .bodyValue(createPublicationRequest)
-//                                .body(BodyInserter.fromValue(createPublicationRequest))
-                        .retrieve()
-                        .bodyToMono(String.class)
-                );
-
-
- */
 
 }
 

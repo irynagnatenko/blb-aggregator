@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebClientConfiguration {
 
-    private static final String COMPOSITE_SRV_URL = "http://composite-server:8086";
+    private static final String COMPOSITE_SRV_URL = "http://composite-service:8086";
 
     @Bean
     public WebClient createWebClient() {
@@ -36,26 +36,5 @@ public class WebClientConfiguration {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
-/*
-    @Bean
-    public WebClient getWebClient() {
-        HttpClient httpClient = HttpClient.create()
-                .tcpConfiguration(client ->
-        client.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .doOnConnected(conn -> conn
-            .addHandlerLast(new ReadTimeoutHandler(10))
-            .addHandlerLast(new WriteTimeoutHandler(10))));
-
-        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-
-        return WebClient.builder()
-                .baseUrl("http://localhost:8086")
-                .clientConnector(connector)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
-
-
- */
 
 }

@@ -11,6 +11,10 @@ import se.b3.healthtech.blackbird.blbaggregator.integration.WebClientImplementat
 import se.b3.healthtech.blackbird.blbaggregator.mapper.TemplatePublicationMapper;
 import se.b3.healthtech.blackbird.blbaggregator.template.model.Template;
 
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +31,11 @@ public class PublicationService {
         this.compositionWebClient = compositionWebClient;
     }
 
+    public Long dateCreated() {
+        ZonedDateTime nowEuropeStockholm = ZonedDateTime.now(ZoneId.of("Europe/Stockholm"));
+        return nowEuropeStockholm.toInstant().toEpochMilli();
+    }
+
     public String createPublication(String userName, String templateId, String title) {
         log.info("init");
         Map<Container, List<ContainerObject>> containerContainerObjectMap;
@@ -34,11 +43,11 @@ public class PublicationService {
         Template template = templateService.getTemplate(templateId);
         log.info("Antal containers i template: {}", template.getTemplateContainerList().size());
 
-        //Skapa upp compositionsobjekten
+        //Skapa upp publikationsobjekten
         log.info("create publication");
         Publication publication = createPublication(template, userName, title);
         log.info("create container and container objects");
-        containerContainerObjectMap = createContainersAndContainerObjects(template, userName, 1000L);
+        containerContainerObjectMap = createContainersAndContainerObjects(template, userName, dateCreated());
 
         //Skapa id
         log.info("Set uuid");
@@ -46,7 +55,7 @@ public class PublicationService {
 
         //Create RequestObject
         log.info("Create request");
-        CreatePublicationRequest request = createCompositionRequest(publication, containerContainerObjectMap);
+        CreatePublicationRequest request = createPublicationRequest(publication, containerContainerObjectMap);
 
         //Invoke compositionService
         log.info("Invoke compositionService");
@@ -57,7 +66,7 @@ public class PublicationService {
     }
 
     Publication createPublication(Template template, String userName, String title) {
-        return mapper.mapToPublication(template, 1000L, userName,
+        return mapper.mapToPublication(template, dateCreated(), userName,
                 UUID.randomUUID().toString(), title);
     }
 
@@ -65,12 +74,10 @@ public class PublicationService {
         return mapper.mapToContainerAndContainerObject(template.getTemplateContainerList(), userName, created);
     }
 
+    // det blir dubbelt här
     void setUuid(Publication publication, Map<Container, List<ContainerObject>> containerContainerObjectMap) {
         //Set Container UUID
-        containerContainerObjectMap.forEach((k, v) -> {
-            k.setUuid(UUID.randomUUID().toString());
-            publication.getContainersIdList().add(k.getUuid());
-        });
+        setUuidOnPublication(publication, containerContainerObjectMap);
 
         Map<Container, List<ContainerObject>> map = new HashMap<>();
         map.putAll(containerContainerObjectMap);
@@ -78,15 +85,24 @@ public class PublicationService {
         map.values().removeAll(Collections.singleton(null));
 
         map.forEach((k, v) -> v.forEach(containerObject -> {
-            {
-                containerObject.setUuid(UUID.randomUUID().toString());
-                k.getContainerObjectsList().add(containerObject.getUuid());
-                containerContainerObjectMap.replace(k, v);
-            }
+            k.getContainerObjectsList().remove(containerObject.getUuid());
+            containerObject.setUuid(UUID.randomUUID().toString());
+            k.getContainerObjectsList().add(containerObject.getUuid());
+
         }));
     }
 
-    CreatePublicationRequest createCompositionRequest(Publication publication, Map<Container, List<ContainerObject>> map) {
+    private void setUuidOnPublication(Publication publication, Map<Container, List<ContainerObject>> containerContainerObjectMap) {
+        publication.setContainersIdList(new ArrayList<>());
+
+        containerContainerObjectMap.forEach((k, v) -> {
+            k.setUuid(UUID.randomUUID().toString());
+            publication.getContainersIdList().add(k.getUuid());
+
+        });
+    }
+
+    CreatePublicationRequest createPublicationRequest(Publication publication, Map<Container, List<ContainerObject>> map) {
         CreatePublicationRequest request = new CreatePublicationRequest();
         request.setPublication(publication);
         log.info("Antal containers som ska sättas i request-objektet: {}", map.size());
