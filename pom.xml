@@ -168,26 +168,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                <version>0.2</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <apiDocsUrl>http://localhost:8088/api-docs</apiDocsUrl>
-                    <outputFileName>openapi.json</outputFileName>
-                    <outputDir>${project.build.directory}</outputDir>
-                    <!--<outputDir>${project.basedir}/src/main/webapp/WEB-INF/api</outputDir> -->
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
