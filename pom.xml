@@ -146,12 +146,35 @@
                 <!-- /RELEASE_VERSION -->
                 <executions>
                     <execution>
+                        <id>openapi-composite</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/api/external/schema/openapi-composite.json</inputSpec>
                             <modelPackage>se.b3.healthtech.blackbird.blbaggregator.domain.composite</modelPackage>
+                            <generatorName>java</generatorName>
+                            <generateApis>false</generateApis>
+                            <generateModels>true</generateModels>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <generateModelTests>false</generateModelTests>
+                            <library>webclient</library>
+                            <configOptions>
+                                <sourceFolder>src/main/java</sourceFolder>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>openapi-content</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api/external/schema/openapi-content.json</inputSpec>
+                            <modelPackage>se.b3.healthtech.blackbird.blbaggregator.domain.content</modelPackage>
                             <generatorName>java</generatorName>
                             <generateApis>false</generateApis>
                             <generateModels>true</generateModels>

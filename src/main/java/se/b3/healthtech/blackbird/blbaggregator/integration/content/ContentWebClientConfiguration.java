@@ -1,4 +1,4 @@
-package se.b3.healthtech.blackbird.blbaggregator.integration;
+package se.b3.healthtech.blackbird.blbaggregator.integration.content;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -14,13 +14,14 @@ import reactor.netty.http.client.HttpClient;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
+
 @Configuration
-public class WebClientConfiguration {
+public class ContentWebClientConfiguration {
 
-    private static final String COMPOSITE_SRV_URL = "http://composite-service:8086";
+    private static final String CONTENT_SRV_URL = "http://content-service:8085";
 
-    @Bean
-    public WebClient createWebClient() {
+    @Bean(name = "contentWebClient")
+    public WebClient createContentWebClient() {
 
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
@@ -30,11 +31,13 @@ public class WebClientConfiguration {
                                 .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS)));
 
 
-        return WebClient.builder()
-                .baseUrl(COMPOSITE_SRV_URL)
+        WebClient contentWebClient = WebClient.builder()
+                .baseUrl(CONTENT_SRV_URL)
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
+        return contentWebClient;
     }
+
 
 }

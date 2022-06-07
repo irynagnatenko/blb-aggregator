@@ -1,0 +1,115 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8085",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api-birdspecies/content/": {
+      "post": {
+        "tags": [
+          "content-controller"
+        ],
+        "summary": "Create a new text block",
+        "operationId": "createContent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a text block"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Content": {
+        "required": [
+          "commitNumber",
+          "contentType",
+          "created",
+          "createdBy",
+          "publicationType",
+          "text",
+          "uuid",
+          "versionNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "HEADER",
+              "H1",
+              "H2",
+              "H3",
+              "CONTENT"
+            ]
+          },
+          "publicationType": {
+            "type": "string",
+            "enum": [
+              "ART_FAKTA"
+            ]
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateContentRequest": {
+        "type": "object",
+        "properties": {
+          "partitionKey": {
+            "type": "string"
+          },
+          "contentList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Content"
+            }
+          }
+        }
+      }
+    }
+  }
+}

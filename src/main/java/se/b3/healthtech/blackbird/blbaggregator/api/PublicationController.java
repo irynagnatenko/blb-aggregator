@@ -24,11 +24,11 @@ public class PublicationController {
     @Operation(summary = "Create a publication from template")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful created publication by templateId",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class)) }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})   })
-    @PostMapping(path= "/",
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
+    @PostMapping(path = "/",
             headers = "userName",
             params = {"templateId", "title"},
             produces = "application/json")
@@ -36,8 +36,8 @@ public class PublicationController {
     public String createPublication(@RequestHeader("userName") String userName,
                                     @RequestParam String templateId,
                                     @RequestParam String title) {
-        publicationService.createPublication(userName, templateId, title);
-        return "hej";
+        return publicationService.createPublication(userName, templateId, title);
+
     }
 
 }
