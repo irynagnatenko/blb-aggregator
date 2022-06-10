@@ -60,44 +60,8 @@ public class TemplateConfiguration {
         templateContainer2.setCompositionType(CONTAINER);
         templateContainer2.setTemplateContainerObjectList(createTemplateContainerObject());
 
-        TemplateContainer templateContainer3 = new TemplateContainer();
-        logger.info("Creating a template container 3");
-        templateContainer3.setId(UUID.randomUUID().toString());
-        templateContainer3.setTextName("Systematik");
-        templateContainer3.setCreator("Iryna");
-        templateContainer3.setCreated(1000L);
-        templateContainer3.setOrdinal(5);
-        templateContainer3.setContentType(ContentType.H2);
-        templateContainer3.setCompositionType(CONTAINER);
-        templateContainer3.setTemplateContainerObjectList(null);
-
-        TemplateContainer templateContainer4 = new TemplateContainer();
-        logger.info("Creating a template container 4");
-        templateContainer4.setId(UUID.randomUUID().toString());
-        templateContainer4.setTextName("Ekologi");
-        templateContainer4.setCreator("Iryna");
-        templateContainer4.setCreated(1000L);
-        templateContainer4.setOrdinal(2);
-        templateContainer4.setContentType(ContentType.H2);
-        templateContainer4.setCompositionType(CONTAINER);
-        templateContainer4.setTemplateContainerObjectList(createTemplateContainerObject());
-
-        TemplateContainer templateContainer5 = new TemplateContainer();
-        logger.info("Creating a template container 5");
-        templateContainer5.setId(UUID.randomUUID().toString());
-        templateContainer5.setTextName("Relation till människa");
-        templateContainer5.setCreator("Iryna");
-        templateContainer5.setCreated(1000L);
-        templateContainer5.setOrdinal(3);
-        templateContainer5.setContentType(ContentType.H2);
-        templateContainer5.setCompositionType(CONTAINER);
-        templateContainer5.setTemplateContainerObjectList(createTemplateContainerObject());
-
         templateContainerList.add(templateContainer1);
         templateContainerList.add(templateContainer2);
-        templateContainerList.add(templateContainer3);
-        templateContainerList.add(templateContainer4);
-        templateContainerList.add(templateContainer5);
 
         templateContainerList.sort(TemplateContainer.sortByOrdinal);
 
@@ -139,42 +103,9 @@ public class TemplateConfiguration {
         templateContainerObject3.setContentType(ContentType.H3);
         templateContainerObject3.setCompositionType(CONTAINER_OBJECT);
 
-        TemplateContainerObject templateContainerObject4 = new TemplateContainerObject();
-        logger.info("Creating a template container object 4");
-        templateContainerObject4.setId(UUID.randomUUID().toString());
-        templateContainerObject4.setTextName("Populationsutveckling, status och hot");
-        templateContainerObject4.setCreator("Iryna");
-        templateContainerObject4.setCreated(1000L);
-        templateContainerObject4.setOrdinal(4);
-        templateContainerObject4.setContentType(ContentType.H3);
-        templateContainerObject4.setCompositionType(CONTAINER_OBJECT);
-
-        TemplateContainerObject templateContainerObject5 = new TemplateContainerObject();
-        logger.info("Creating a template container object 5");
-        templateContainerObject5.setId(UUID.randomUUID().toString());
-        templateContainerObject5.setTextName("Folktro");
-        templateContainerObject5.setCreator("Iryna");
-        templateContainerObject5.setCreated(1000L);
-        templateContainerObject5.setOrdinal(5);
-        templateContainerObject5.setContentType(ContentType.H3);
-        templateContainerObject5.setCompositionType(CONTAINER_OBJECT);
-
-        TemplateContainerObject templateContainerObject6 = new TemplateContainerObject();
-        logger.info("Creating a template container object 6");
-        templateContainerObject6.setId(UUID.randomUUID().toString());
-        templateContainerObject6.setTextName("Namn");
-        templateContainerObject6.setCreator("Iryna");
-        templateContainerObject6.setCreated(1000L);
-        templateContainerObject6.setOrdinal(6);
-        templateContainerObject6.setContentType(ContentType.H3);
-        templateContainerObject6.setCompositionType(CONTAINER_OBJECT);
-
         templateContainerObjectList.add(templateContainerObject1);
         templateContainerObjectList.add(templateContainerObject2);
         templateContainerObjectList.add(templateContainerObject3);
-        templateContainerObjectList.add(templateContainerObject4);
-        templateContainerObjectList.add(templateContainerObject5);
-        templateContainerObjectList.add(templateContainerObject6);
 
         templateContainerObjectList.sort(TemplateContainerObject.sortByOrdinal);
 

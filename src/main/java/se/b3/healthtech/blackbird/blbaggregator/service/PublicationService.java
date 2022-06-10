@@ -3,6 +3,7 @@ package se.b3.healthtech.blackbird.blbaggregator.service;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import se.b3.healthtech.blackbird.blbaggregator.api.response.PublicationResponse;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.ContainerObject;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.CreatePublicationRequest;
@@ -262,4 +263,13 @@ public class PublicationService {
         return target;
     }
 
+    public PublicationResponse getLatestPublication(String key) {
+        Publication publication = compositionClient.getLatestPublication(key);
+        List<Container> containerList = compositionClient.getLatestContainers(key);
+        List<ContainerObject> containerObjectsList = compositionClient.getLatestContainerObjects(key);
+        List<Content> contentList = contentClient.getLatestContent(key);
+
+        PublicationResponse latestPublicationResponse = new PublicationResponse(publication, containerList, containerObjectsList, contentList);
+        return latestPublicationResponse;
+    }
 }
