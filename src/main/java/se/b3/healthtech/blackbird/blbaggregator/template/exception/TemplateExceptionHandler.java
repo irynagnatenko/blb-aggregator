@@ -1,4 +1,4 @@
-package se.b3.healthtech.blackbird.blbaggregator.exception;
+package se.b3.healthtech.blackbird.blbaggregator.template.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -1,0 +1,245 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8085",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api-birdspecies/content/": {
+      "post": {
+        "tags": [
+          "content-controller"
+        ],
+        "summary": "Create a new text block",
+        "operationId": "createContent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a text block"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api-birdspecies/content/latest/all/": {
+      "get": {
+        "tags": [
+          "content-controller"
+        ],
+        "summary": "Get the latest content",
+        "operationId": "getLatestContent",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Content"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Content": {
+        "required": [
+          "commitNumber",
+          "contentType",
+          "created",
+          "createdBy",
+          "uuid",
+          "versionNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "HEADER",
+              "H1",
+              "H2",
+              "H3",
+              "CONTENT"
+            ]
+          },
+          "headerContent": {
+            "$ref": "#/components/schemas/HeaderContent"
+          },
+          "textContent": {
+            "$ref": "#/components/schemas/TextContent"
+          },
+          "listContent": {
+            "$ref": "#/components/schemas/ListContent"
+          },
+          "tableContent": {
+            "$ref": "#/components/schemas/TableContent"
+          }
+        }
+      },
+      "CreateContentRequest": {
+        "type": "object",
+        "properties": {
+          "partitionKey": {
+            "type": "string"
+          },
+          "contentList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Content"
+            }
+          }
+        }
+      },
+      "HeaderContent": {
+        "required": [
+          "headerType",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "headerType": {
+            "type": "string",
+            "enum": [
+              "ONE",
+              "TWO",
+              "THREE",
+              "FOUR",
+              "FIVE"
+            ]
+          }
+        }
+      },
+      "ListContent": {
+        "required": [
+          "listType",
+          "rows"
+        ],
+        "type": "object",
+        "properties": {
+          "listType": {
+            "type": "string",
+            "enum": [
+              "NUMBERED",
+              "BULLETED"
+            ]
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TableContent": {
+        "required": [
+          "tableHeader"
+        ],
+        "type": "object",
+        "properties": {
+          "tableHeader": {
+            "type": "string"
+          },
+          "columnHeaders": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TableRow"
+            }
+          }
+        }
+      },
+      "TableRow": {
+        "required": [
+          "celldata"
+        ],
+        "type": "object",
+        "properties": {
+          "celldata": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TextContent": {
+        "required": [
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

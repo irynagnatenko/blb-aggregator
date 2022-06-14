@@ -1,4 +1,4 @@
-package se.b3.healthtech.blackbird.blbaggregator.exception;
+package se.b3.healthtech.blackbird.blbaggregator.template.exception;
 
 public class TemplateNotFoundException extends RuntimeException {
 

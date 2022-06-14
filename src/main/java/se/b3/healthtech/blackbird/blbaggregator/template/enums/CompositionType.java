@@ -1,4 +1,4 @@
-package se.b3.healthtech.blackbird.blbaggregator.enums;
+package se.b3.healthtech.blackbird.blbaggregator.template.enums;
 
 public enum CompositionType {
     COMPOSITION,

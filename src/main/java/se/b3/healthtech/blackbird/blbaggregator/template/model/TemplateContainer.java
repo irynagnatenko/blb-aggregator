@@ -1,11 +1,9 @@
-package se.b3.healthtech.blackbird.blbaggregator.template;
+package se.b3.healthtech.blackbird.blbaggregator.template.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import se.b3.healthtech.blackbird.blbaggregator.enums.CompositionType;
-import se.b3.healthtech.blackbird.blbaggregator.enums.ContentType;
+import se.b3.healthtech.blackbird.blbaggregator.template.enums.CompositionType;
+import se.b3.healthtech.blackbird.blbaggregator.template.enums.ContentType;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,9 +11,9 @@ import java.util.List;
 public class TemplateContainer {
 
     private String id;
-    private String name;
+    private String textName;
     private String creator;
-    private LocalDateTime created;
+    private long created;
     private int ordinal;
     private ContentType contentType;
     private CompositionType compositionType;
@@ -29,10 +27,11 @@ public class TemplateContainer {
             int ord2 = t2.getOrdinal();
 
             /*For ascending order*/
-            return ord1-ord2;
+            return ord1 - ord2;
 
             /*For descending order*/
             //ord2-ord1;
-        }};
+        }
+    };
 
 }
