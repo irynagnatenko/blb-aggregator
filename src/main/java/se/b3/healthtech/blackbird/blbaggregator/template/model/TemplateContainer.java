@@ -1,8 +1,8 @@
 package se.b3.healthtech.blackbird.blbaggregator.template.model;
 
 import lombok.Data;
-import se.b3.healthtech.blackbird.blbaggregator.enums.CompositionType;
-import se.b3.healthtech.blackbird.blbaggregator.enums.ContentType;
+import se.b3.healthtech.blackbird.blbaggregator.template.enums.CompositionType;
+import se.b3.healthtech.blackbird.blbaggregator.template.enums.ContentType;
 
 import java.util.Comparator;
 import java.util.List;

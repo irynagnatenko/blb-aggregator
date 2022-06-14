@@ -28,12 +28,15 @@ public class ContentClient {
         this.contentWebClient = contentWebClient;
     }
 
-    public void postContent(CreateContentRequest request) {
-        log.info("Antal containers: {}", request.getContentList().size());
+    public void postContent(String key, List<Content> contentList) {
+        MultiValueMap<String, String> parameters = createParameterKey(key);
 
         contentWebClient.post()
-                .uri(URI_CONTENT_POST)
-                .body(Mono.just(request), CreateContentRequest.class)
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTENT_POST)
+                        .queryParams(parameters)
+                        .build())
+                .body(Mono.just(contentList), Content.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new RuntimeException("Content API not found")))
                 .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("Content Server is not responding")))

@@ -1,29 +1,27 @@
 package se.b3.healthtech.blackbird.blbaggregator.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.b3.healthtech.blackbird.blbaggregator.template.exception.TemplateNotFoundException;
 import se.b3.healthtech.blackbird.blbaggregator.template.model.Template;
 
-import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class TemplateService {
 
-    Logger logger = LoggerFactory.getLogger(TemplateService.class);
-
-    @Autowired
-    private HashMap<String, Template> templateHashMap;
+    private final Map<String, Template> template;
+    public TemplateService(Map<String, Template> template) {
+        this.template = template;
+    }
 
     public Template getTemplate(String templateId) {
-        logger.info("getTemplate Service");
-
-        if (templateHashMap.containsKey(templateId)) {
-            return templateHashMap.get(templateId);
+        log.info("Service - TemplateService, getTemplate by Id: {}", templateId);
+        if(template.containsKey(templateId)) {
+            return template.get(templateId);
         } else {
-            throw new TemplateNotFoundException("Template not found in the HashMap");
+            throw new TemplateNotFoundException("TemplateId "+templateId+" does not exist in TemplateMap");
         }
     }
 

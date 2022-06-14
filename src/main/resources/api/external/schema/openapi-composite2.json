@@ -1,0 +1,373 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8086",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api-blackbird/containerobject/": {
+      "post": {
+        "tags": [
+          "container-object-controller"
+        ],
+        "summary": "Create a new containerObject list",
+        "operationId": "createPublication",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ContainerObject"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a containerObject list"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api-birdspecies/publication/": {
+      "post": {
+        "tags": [
+          "publication-controller"
+        ],
+        "summary": "Create a new publication",
+        "operationId": "createPublication_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Publication"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created publication"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api-birdspecies/container/": {
+      "post": {
+        "tags": [
+          "container-controller"
+        ],
+        "summary": "Create a new container list",
+        "operationId": "createPublication_2",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Container"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a container list"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api-blackbird/containerobject/latest/all/": {
+      "get": {
+        "tags": [
+          "container-object-controller"
+        ],
+        "summary": "Get the list of latest containerObjects for a specific partitionKey",
+        "operationId": "getLatestContainerObjects",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found Container Object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerObject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api-birdspecies/publication/latest/": {
+      "get": {
+        "tags": [
+          "publication-controller"
+        ],
+        "summary": "Get latest publication for a specific partition key",
+        "operationId": "getLatestPublication",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found publication"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api-birdspecies/container/latest/all/": {
+      "get": {
+        "tags": [
+          "container-controller"
+        ],
+        "summary": "Get the list of latest containers for a specific partitionKey",
+        "operationId": "getLatestContainers",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found Container",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Container"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ContainerObject": {
+        "required": [
+          "commitNumber",
+          "created",
+          "createdBy",
+          "objectType",
+          "uuid",
+          "versionNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "objectType": {
+            "type": "string",
+            "enum": [
+              "CONTENT"
+            ]
+          }
+        }
+      },
+      "Publication": {
+        "required": [
+          "commitNumber",
+          "created",
+          "createdBy",
+          "publicationType",
+          "templateId",
+          "title",
+          "uuid",
+          "versionNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "templateId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "publicationType": {
+            "type": "string",
+            "enum": [
+              "ART_FAKTA"
+            ]
+          }
+        }
+      },
+      "Container": {
+        "required": [
+          "commitNumber",
+          "containerObjectsList",
+          "contentType",
+          "created",
+          "createdBy",
+          "ordinal",
+          "uuid",
+          "versionNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commitNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "ordinal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "H1",
+              "H2",
+              "H3",
+              "CONTENT"
+            ]
+          },
+          "containerObjectsList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
