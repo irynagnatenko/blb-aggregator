@@ -11,12 +11,15 @@ import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Publication;
 
 import java.util.List;
+
 @Slf4j
 @Service
-public class ContainerClient extends BaseClient{
+public class ContainerClient extends BaseClient {
 
-    private static final String URI_CONTAINER_GET =  "/api-birdspecies/container/latest/all/";
-    private static final String URI_CONTAINER_POST = "/api-birdspecies/container/";
+    private static final String URI_CONTAINER_GET = "/api-birdspecies/container/latest/all/";
+    private static final String URI_CONTAINER_ADD_ALL = "/api-birdspecies/container/add/all/";
+    private static final String URI_CONTAINER_ADD_ONE = "/api-birdspecies/container/add/";
+
 
     private final WebClient compositionWebClient;
 
@@ -38,7 +41,8 @@ public class ContainerClient extends BaseClient{
                         error -> Mono.error(new RuntimeException("Container API not found getLatestContainers")))
                 .onStatus(HttpStatus::is5xxServerError,
                         error -> Mono.error(new RuntimeException("Server is not responding")))
-                .bodyToMono(new ParameterizedTypeReference<List<Container>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Container>>() {
+                })
                 .block();
 
     }
@@ -49,13 +53,13 @@ public class ContainerClient extends BaseClient{
 
         compositionWebClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path(URI_CONTAINER_POST)
+                        .path(URI_CONTAINER_ADD_ALL)
                         .queryParams(parameters)
                         .build())
                 .body(Mono.just(containerList), Publication.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                        error -> Mono.error(new RuntimeException("Containers API not found")))
+                        error -> Mono.error(new RuntimeException("Add containers API not found")))
                 .onStatus(HttpStatus::is5xxServerError,
                         error -> Mono.error(new RuntimeException("Server is not responding")))
                 .bodyToMono(Void.class)
@@ -63,6 +67,27 @@ public class ContainerClient extends BaseClient{
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
                 .block();
 
+    }
+
+    public void addContainer(String key, Container container) {
+
+        MultiValueMap<String, String> parameters = createParameterKey(key);
+
+        compositionWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTAINER_ADD_ONE)
+                        .queryParams(parameters)
+                        .build())
+                .body(Mono.just(container), Container.class)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Add container API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(Void.class)
+                .log()
+                .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
+                .block();
     }
 
 }

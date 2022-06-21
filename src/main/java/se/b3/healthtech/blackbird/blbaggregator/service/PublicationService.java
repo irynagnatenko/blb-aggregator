@@ -14,10 +14,6 @@ import se.b3.healthtech.blackbird.blbaggregator.template.model.Template;
 import se.b3.healthtech.blackbird.blbaggregator.template.model.TemplateContainer;
 import se.b3.healthtech.blackbird.blbaggregator.template.model.TemplateContainerObject;
 
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -41,15 +37,10 @@ public class PublicationService {
         this.contentService = contentService;
     }
 
-    public Long dateCreated() {
-        ZonedDateTime nowEuropeStockholm = ZonedDateTime.now(ZoneId.of("Europe/Stockholm"));
-        return nowEuropeStockholm.toInstant().toEpochMilli();
-    }
-
     public String createPublication(String userName, String templateId, String title) {
         log.info("createPublication:init");
         String key = UUID.randomUUID().toString();
-        long created =dateCreated();
+        long created =ServiceUtil.setCreatedTime();
 
         Template template = templateService.getTemplate(templateId);
         //Publication
@@ -86,7 +77,6 @@ public class PublicationService {
 
         return publication.getUuid();
     }
-
 
     void setContentId(List<TemplateContainerObject> templateContainerObjects) {
         templateContainerObjects.forEach(objectV2 -> {
