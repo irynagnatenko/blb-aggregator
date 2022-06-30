@@ -66,7 +66,7 @@ public class PublicationService {
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> publicationClient.postPublication(publication));
         CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> containerService.addContainers(key, containers));
         CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> containerObjectService.addContainerObjects(key, containerObjects));
-        CompletableFuture<Void> future4 = CompletableFuture.runAsync(() -> contentService.addContent(key, contents));
+        CompletableFuture<Void> future4 = CompletableFuture.runAsync(() -> contentService.createContent(key, contents));
 
         combinedFuture = CompletableFuture.allOf(future1, future2, future3, future4);
 

@@ -8,9 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.domain.content.Content;
-import se.b3.healthtech.blackbird.blbaggregator.domain.content.CreateContentRequest;
 
 import java.util.List;
 
@@ -18,11 +16,12 @@ import java.util.List;
 @Service
 public class ContentClient {
 
-    private static final String URI_CONTENT_POST = "/api-birdspecies/content/";
-    private static final String URI_CONTENT_GET = "/api-birdspecies/content/latest/all/";
+    private static final String URI_CONTENT_POST_ALL = "/api-birdspecies/content/all/";
+    private static final String URI_CONTENT_GET_ALL = "/api-birdspecies/content/all/";
+    private static final String URI_CONTENT_ADD_ONE = "/api-birdspecies/content/";
 
 
-    private WebClient contentWebClient;
+    private final WebClient contentWebClient;
 
     public ContentClient(WebClient contentWebClient) {
         this.contentWebClient = contentWebClient;
@@ -33,7 +32,7 @@ public class ContentClient {
 
         contentWebClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path(URI_CONTENT_POST)
+                        .path(URI_CONTENT_POST_ALL)
                         .queryParams(parameters)
                         .build())
                 .body(Mono.just(contentList), Content.class)
@@ -46,6 +45,7 @@ public class ContentClient {
                 .subscribe();
 
     }
+
     MultiValueMap<String, String> createParameterKey(String key) {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("key", key);
@@ -59,16 +59,38 @@ public class ContentClient {
 
         return contentWebClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(URI_CONTENT_GET)
+                        .path(URI_CONTENT_GET_ALL)
                         .queryParams(parameters)
                         .build())
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                        error -> Mono.error(new RuntimeException("Content API not found")))
+                        error -> Mono.error(new RuntimeException("Get content API not found")))
                 .onStatus(HttpStatus::is5xxServerError,
                         error -> Mono.error(new RuntimeException("Content Server is not responding")))
-                .bodyToMono(new ParameterizedTypeReference<List<Content>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Content>>() {
+                })
                 .block();
 
+    }
+
+    public void addContentObject(String key, Content content) {
+
+        MultiValueMap<String, String> parameters = createParameterKey(key);
+
+        contentWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTENT_ADD_ONE)
+                        .queryParams(parameters)
+                        .build())
+                .body(Mono.just(content), Content.class)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Add content API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Content server is not responding")))
+                .bodyToMono(Void.class)
+                .log()
+                .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
+                .block();
     }
 }

@@ -47,7 +47,7 @@ public class PublicationController {
             @ApiResponse(responseCode = "200", description = "Successfully found publication", content = {@Content}),
             @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})   })
-    @GetMapping(value= "/latest",
+    @GetMapping(value= "/",
             params = "key",
             produces = {"application/json"})
     @ResponseStatus(value = HttpStatus.OK)
