@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.integration.composition.ContainerClient;
+import se.b3.healthtech.blackbird.blbaggregator.integration.composition.ContainerObjectClient;
 import se.b3.healthtech.blackbird.blbaggregator.service.util.ServiceUtil;
 
 import java.util.*;
@@ -17,9 +18,11 @@ public class ContainerService {
 
     private final ContainerClient containerClient;
 
-    public ContainerService(ContainerClient containerClient) {
+
+    public ContainerService(ContainerClient containerClient, ContainerObjectClient containerObjectClient, ContainerObjectService containerObjectService) {
         this.containerClient = containerClient;
     }
+
 
     public void addContainers(String key, List<Container> containers) {
         containerClient.postContainers(key, containers);
@@ -29,6 +32,11 @@ public class ContainerService {
         List<Container> latestContainers = containerClient.getLatestContainers(key);
         latestContainers.sort(sortByOrdinal);
         return latestContainers;
+    }
+    // fot addContent method
+    public Container getLatestContainer(String publicationId, String containerId){
+        Container latestContainer = containerClient.getLatestContainer(publicationId, containerId);
+        return latestContainer;
     }
 
     //Metoden ska kunna hantera att parentId är null. I det fallet ska den nya containern ha ordinalNr 1
@@ -101,6 +109,30 @@ public class ContainerService {
         return updatedContainerList;
     }
 
+   //TODO
+   //Anropa ny metod i containerService.updateContainerWithNewContainerObjectRef(container, uuid, parentId)
+   // för att uppdatera containerObjectListan med nytt ContainerObjectId
+   // (om parentId finns ska det nya ContainerObjectId placeras efter parentId i listan av containerObjectId).
+    public void updateContainerWithNewContainerObjectRef(Container container, String uuid, Optional<String> parentId) {
 
+        int index = 0;
+
+        List<String> containerObjectListToUpdate = container.getContainerObjectsList();
+
+        if (parentId.isPresent()) {
+            index = containerObjectListToUpdate.indexOf(parentId)+1;
+        }
+
+        containerObjectListToUpdate.add(index, uuid);
+        container.setContainerObjectsList(containerObjectListToUpdate);
+
+        log.info("Container Service: pdateContainerWithNewContainerObjectRef");
+
+    }
+
+
+    public void addContainer(String publicationId, Container container) {
+        containerClient.addContainer(publicationId, container);
+    }
 }
 
