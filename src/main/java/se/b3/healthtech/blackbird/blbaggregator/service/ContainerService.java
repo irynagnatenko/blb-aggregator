@@ -78,7 +78,7 @@ public class ContainerService {
         // We wait for all threads to be ready
         log.info("createPublication(): waiting for threads to complete");
         combinedFuture.join();
-        log.info("createPublication(): threads are complet");
+        log.info("createPublication(): threads are complete");
 
     }
 
@@ -93,7 +93,7 @@ public class ContainerService {
         return newContainer;
 
     }
-    //* sätta latet på den nya containern
+    //* sätta latest på den nya containern
 
     public List<Container> updateOrdinal(List<Container> containersList, int newContainerOrdinalNr) {
         List<Container> updatedContainerList = new ArrayList<>();
@@ -109,10 +109,6 @@ public class ContainerService {
         return updatedContainerList;
     }
 
-   //TODO
-   //Anropa ny metod i containerService.updateContainerWithNewContainerObjectRef(container, uuid, parentId)
-   // för att uppdatera containerObjectListan med nytt ContainerObjectId
-   // (om parentId finns ska det nya ContainerObjectId placeras efter parentId i listan av containerObjectId).
     public void updateContainerWithNewContainerObjectRef(Container container, String uuid, Optional<String> parentId) {
 
         int index = 0;
@@ -126,10 +122,9 @@ public class ContainerService {
         containerObjectListToUpdate.add(index, uuid);
         container.setContainerObjectsList(containerObjectListToUpdate);
 
-        log.info("Container Service: pdateContainerWithNewContainerObjectRef");
+        log.info("Container Service: updateContainerWithNewContainerObjectRef");
 
     }
-
 
     public void addContainer(String publicationId, Container container) {
         containerClient.addContainer(publicationId, container);

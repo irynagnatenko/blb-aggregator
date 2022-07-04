@@ -43,4 +43,21 @@ public class ContentController {
 
     }
 
+    @Operation(summary = "Update content")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the content",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class))}),
+            @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
+    @PutMapping(path = "/update/",
+            produces = "application/json")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void updateContent(@RequestHeader String userName,
+                              @RequestParam String publicationId,
+                              @RequestBody CreateContentRequest contentRequest) {
+        log.info("in the update content method");
+        contentService.updateContent(userName, publicationId, contentRequest);
+
+    }
 }

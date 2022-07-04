@@ -36,8 +36,8 @@ public class ContainerController {
             produces = "application/json")
     @ResponseStatus(value = HttpStatus.OK)
     public void createContainer(@RequestHeader("userName") String userName,
-                                  @RequestParam String publicationId,
-                                  @RequestParam Optional<String> parentId) {
+                                  @RequestParam ("publicationId") String publicationId,
+                                  @RequestParam ("parentId") Optional<String> parentId) {
         log.info("in the create container method");
         containerService.addContainer(publicationId, parentId, userName);
 

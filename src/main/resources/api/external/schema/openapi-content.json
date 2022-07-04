@@ -11,18 +11,71 @@
     }
   ],
   "paths": {
+    "/api-birdspecies/content/all": {
+      "post": {
+        "tags": [
+          "content-controller"
+        ],
+        "summary": "Create a new list of text blocks",
+        "operationId": "createContentList",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Content"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a list of text blocks"
+          },
+          "404": {
+            "description": "Object not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api-birdspecies/content/": {
       "post": {
         "tags": [
           "content-controller"
         ],
-        "summary": "Create a new text block",
-        "operationId": "createContent",
+        "summary": "Create a new content block",
+        "operationId": "addContent",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateContentRequest"
+                "$ref": "#/components/schemas/Content"
               }
             }
           },
@@ -41,7 +94,7 @@
         }
       }
     },
-    "/api-birdspecies/content/latest/all/": {
+    "/api-birdspecies/content/all/": {
       "get": {
         "tags": [
           "content-controller"
@@ -113,11 +166,13 @@
           "contentType": {
             "type": "string",
             "enum": [
-              "HEADER",
-              "H1",
-              "H2",
-              "H3",
-              "CONTENT"
+              "TEXT",
+              "LIST",
+              "TABLE",
+              "ATTACHMENT_REFERENCE",
+              "PICTURE_REFERENCE",
+              "REFERENCE",
+              "HEADER"
             ]
           },
           "headerContent": {
@@ -131,20 +186,6 @@
           },
           "tableContent": {
             "$ref": "#/components/schemas/TableContent"
-          }
-        }
-      },
-      "CreateContentRequest": {
-        "type": "object",
-        "properties": {
-          "partitionKey": {
-            "type": "string"
-          },
-          "contentList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Content"
-            }
           }
         }
       },

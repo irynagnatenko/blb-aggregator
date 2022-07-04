@@ -173,7 +173,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api/external/schema/openapi-content2.json</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api/external/schema/openapi-content.json</inputSpec>
                             <modelPackage>se.b3.healthtech.blackbird.blbaggregator.domain.content</modelPackage>
                             <generatorName>java</generatorName>
                             <generateApis>false</generateApis>
