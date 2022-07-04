@@ -8,6 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.domain.content.Content;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ContentClient {
     private static final String URI_CONTENT_POST_ALL = "/api-birdspecies/content/all/";
     private static final String URI_CONTENT_GET_ALL = "/api-birdspecies/content/all/";
     private static final String URI_CONTENT_ADD_ONE = "/api-birdspecies/content/";
-
+    private static final String URI_CONTENT_GET_ONE = "/api-birdspecies/content/all/";
 
     private final WebClient contentWebClient;
 
@@ -93,4 +94,28 @@ public class ContentClient {
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
                 .block();
     }
+/*
+    // for addContent
+    // get one content-object
+    public Content getContent(String key, String contentId) {
+        MultiValueMap<String, String> parameters = createParameterKey(key);
+
+        return contentWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTENT_GET_ONE)
+                        .queryParams(parameters)
+                        .queryParam("contentId", contentId)
+                        .build())
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Content API not found getContent")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(new ParameterizedTypeReference<Content>() {
+                })
+                .block();
+    }
+
+
+ */
 }

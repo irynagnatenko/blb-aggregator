@@ -7,6 +7,7 @@ import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.ContainerObject;
 import se.b3.healthtech.blackbird.blbaggregator.domain.content.Content;
 import se.b3.healthtech.blackbird.blbaggregator.integration.content.ContentClient;
+import se.b3.healthtech.blackbird.blbaggregator.service.util.ContentUtil;
 import se.b3.healthtech.blackbird.blbaggregator.service.util.ServiceUtil;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class ContentService {
     }
 
     public void createContent(String key, List<Content> contents) {
+
         contentClient.postContent(key, contents);
     }
 
@@ -94,5 +96,20 @@ public class ContentService {
         contentClient.addContentObject(publicationId, content);
     }
 
+    public void updateContent(String userName, String publicationId, CreateContentRequest contentRequest) {
+        long created = ServiceUtil.setCreatedTime();
+        // get latest content-objekt
+        List<Content> latestContentList = getLatestContent(publicationId);
+        //List<Content> latestContentList = getLatestContent(publicationId, contentRequest.id());
+        Content contentToUpdate = latestContentList.get(0);
 
+        //Uppdatera uppläst content-objekt med data från ContentRequest. OBS! Befintligt content ska ersättas med content från ContentRequest.
+        contentToUpdate.setContentType(contentRequest.contentTypeEnum());
+        contentToUpdate.setCreatedBy(userName);
+        contentToUpdate.setCreated(created);
+        ContentUtil.setContentByContentType(contentToUpdate, contentRequest);
+
+        //insert content
+        contentClient.addContentObject(publicationId, contentToUpdate);
+    }
 }

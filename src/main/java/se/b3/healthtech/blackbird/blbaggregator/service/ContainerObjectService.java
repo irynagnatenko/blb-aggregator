@@ -32,9 +32,6 @@ public class ContainerObjectService {
     return newContainerObject;
     }
 
-    //Metoden ska anropa ny metod i containerObjectClient
-    // som tar ett publicationId och ett ContainerObject och anropar motsvarande tjänst i CompositeTjänsten.
-    //Metoden returnerar void
     public void addContainerObject(String publicationId, ContainerObject containerObject) {
         containerObjectClient.addContainerObject(publicationId, containerObject);
     }
