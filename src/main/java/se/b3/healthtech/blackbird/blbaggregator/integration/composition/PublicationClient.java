@@ -13,7 +13,7 @@ import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Publication;
 public class PublicationClient extends BaseClient {
 
     private static final String URI_COMPOSITION_POST = "/api-birdspecies/publication/";
-    private static final String URI_COMPOSITION_GET = "/api-birdspecies/publication/latest/";
+    private static final String URI_COMPOSITION_GET = "/api-birdspecies/publication/";
 
     private final WebClient compositionWebClient;
 

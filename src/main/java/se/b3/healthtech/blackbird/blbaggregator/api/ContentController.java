@@ -8,38 +8,39 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import se.b3.healthtech.blackbird.blbaggregator.service.ContainerService;
+import se.b3.healthtech.blackbird.blbaggregator.service.ContentService;
 
 import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api-birdspecies/container")
-public class ContainerController {
+@RequestMapping(value = "/api-birdspecies/content")
+public class ContentController {
 
-    private final ContainerService containerService;
+    private final ContentService contentService;
 
-    public ContainerController(ContainerService containerService) {
-        this.containerService = containerService;
+    public ContentController(ContentService contentService) {
+        this.contentService = contentService;
     }
 
-    @Operation(summary = "Add container to the publication")
+    @Operation(summary = "Add content to the publication")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully added a container",
+            @ApiResponse(responseCode = "200", description = "Successfully added a content",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Void.class))}),
             @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
     @PostMapping(path = "/",
-            headers = "userName",
-            params = {"publicationId", "parentId"},
             produces = "application/json")
     @ResponseStatus(value = HttpStatus.OK)
-    public void createContainer(@RequestHeader("userName") String userName,
-                                  @RequestParam String publicationId,
-                                  @RequestParam Optional<String> parentId) {
+    public void createContent( @RequestHeader String userName,
+                                @RequestParam String publicationId,
+                                @RequestParam String containerId,
+                                @RequestParam Optional<String> parentId,
+                                @RequestBody CreateContentRequest contentRequest) {
         log.info("in the create container method");
-        containerService.addContainer(publicationId, parentId, userName);
+        contentService.addContent(userName, publicationId, containerId, parentId, contentRequest );
 
     }
+
 }

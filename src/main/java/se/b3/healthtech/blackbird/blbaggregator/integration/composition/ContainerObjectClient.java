@@ -16,8 +16,9 @@ import java.util.List;
 @Service
 public class ContainerObjectClient extends BaseClient {
 
-    private static final String URI_CONTAINER_OBJECT_GET = "api-blackbird/containerobject/latest/all/";
-    private static final String URI_CONTAINER_OBJECT_POST = "api-blackbird/containerobject/";
+    private static final String URI_CONTAINER_OBJECT_GET_ALL = "api-blackbird/containerobject/all/";
+    private static final String URI_CONTAINER_OBJECT_POST_ALL = "api-blackbird/containerobject/all";
+    private static final String URI_CONTAINER_OBJECT_ADD_ONE = "api-blackbird/containerobject/";
 
     private final WebClient compositionWebClient;
 
@@ -32,7 +33,7 @@ public class ContainerObjectClient extends BaseClient {
 
         return compositionWebClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(URI_CONTAINER_OBJECT_GET)
+                        .path(URI_CONTAINER_OBJECT_GET_ALL)
                         .queryParams(parameters)
                         .build())
                 .retrieve()
@@ -40,7 +41,8 @@ public class ContainerObjectClient extends BaseClient {
                         error -> Mono.error(new RuntimeException("Compmvn clean installosition API not found getLatestContainerObjects")))
                 .onStatus(HttpStatus::is5xxServerError,
                         error -> Mono.error(new RuntimeException("Server is not responding")))
-                .bodyToMono(new ParameterizedTypeReference<List<ContainerObject>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<ContainerObject>>() {
+                })
                 .block();
 
     }
@@ -51,9 +53,9 @@ public class ContainerObjectClient extends BaseClient {
 
         compositionWebClient.post()
                 .uri(uriBuilder -> uriBuilder
-                .path(URI_CONTAINER_OBJECT_POST)
-                .queryParams(parameters)
-                .build())
+                        .path(URI_CONTAINER_OBJECT_POST_ALL)
+                        .queryParams(parameters)
+                        .build())
                 .body(Mono.just(containerObjectList), Publication.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
@@ -64,7 +66,29 @@ public class ContainerObjectClient extends BaseClient {
                 .log()
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
                 .block();
+    }
 
+    public void addContainerObject(String key, ContainerObject containerObject) {
+
+        MultiValueMap<String, String> parameters = createParameterKey(key);
+
+        compositionWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTAINER_OBJECT_ADD_ONE)
+                        .queryParams(parameters)
+                        .build())
+                .body(Mono.just(containerObject), ContainerObject.class)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Add container object API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(Void.class)
+                .log()
+                .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
+                .block();
     }
 
 }
+
+
