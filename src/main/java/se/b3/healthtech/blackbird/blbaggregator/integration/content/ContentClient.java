@@ -4,23 +4,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.domain.content.Content;
 
 import java.util.List;
 
 @Slf4j
 @Service
-public class ContentClient {
+public class ContentClient extends BaseClientContent {
 
     private static final String URI_CONTENT_POST_ALL = "/api-birdspecies/content/all/";
     private static final String URI_CONTENT_GET_ALL = "/api-birdspecies/content/all/";
     private static final String URI_CONTENT_ADD_ONE = "/api-birdspecies/content/";
-    private static final String URI_CONTENT_GET_ONE = "/api-birdspecies/content/all/";
+    private static final String URI_CONTENT_GET_ONE = "/api-birdspecies/content/";
+    private static final String URI_CONTENT_DELETE = "/api-birdspecies/content/";
 
     private final WebClient contentWebClient;
 
@@ -44,16 +43,9 @@ public class ContentClient {
                 .log()
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
                 .subscribe();
-
     }
 
-    MultiValueMap<String, String> createParameterKey(String key) {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("key", key);
-        return parameters;
-    }
-
-    public List<Content> getLatestContent(String key) {
+    public List<Content> getLatestContentList(String key) {
         log.info("get latest content with key:{}", key);
 
         MultiValueMap<String, String> parameters = createParameterKey(key);
@@ -65,16 +57,16 @@ public class ContentClient {
                         .build())
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                        error -> Mono.error(new RuntimeException("Get content API not found")))
+                        error -> Mono.error(new RuntimeException("Get content list API not found")))
                 .onStatus(HttpStatus::is5xxServerError,
                         error -> Mono.error(new RuntimeException("Content Server is not responding")))
                 .bodyToMono(new ParameterizedTypeReference<List<Content>>() {
                 })
                 .block();
-
     }
 
     public void addContentObject(String key, Content content) {
+        log.info("add content with key:{}", key);
 
         MultiValueMap<String, String> parameters = createParameterKey(key);
 
@@ -94,28 +86,52 @@ public class ContentClient {
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
                 .block();
     }
-/*
-    // for addContent
+
+    // for deleteContent
     // get one content-object
     public Content getContent(String key, String contentId) {
-        MultiValueMap<String, String> parameters = createParameterKey(key);
+        log.info("get latest content with key:{}", key);
+
+        MultiValueMap<String, String> parameters = createParameterKey(key, contentId);
 
         return contentWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(URI_CONTENT_GET_ONE)
                         .queryParams(parameters)
-                        .queryParam("contentId", contentId)
                         .build())
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                        error -> Mono.error(new RuntimeException("Content API not found getContent")))
+                        error -> Mono.error(new RuntimeException("getContent API not found getContent")))
                 .onStatus(HttpStatus::is5xxServerError,
                         error -> Mono.error(new RuntimeException("Server is not responding")))
-                .bodyToMono(new ParameterizedTypeReference<Content>() {
-                })
+                .bodyToMono(Content.class)
                 .block();
     }
 
+    public void deleteContent(String key, String userName, List<Content> contentList) {
+        log.info("deleteContentClient with a key {}: ", key);
+        log.info("contentId: ", contentList.get(0));
+        log.info("contentId: ", contentList.get(1));
+        log.info("contentId: ", contentList.get(2));
 
- */
+        MultiValueMap<String, String> parameters = createParameterKey(key);
+
+        contentWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTENT_DELETE)
+                        .queryParams(parameters)
+                        .build())
+                .header("userName", userName)
+                .body(Mono.just(contentList), Content.class)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Delete content API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(Void.class)
+                .log()
+                .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
+                //.block();
+                .subscribe();
+    }
 }

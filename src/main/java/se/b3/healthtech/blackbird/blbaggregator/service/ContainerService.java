@@ -35,6 +35,7 @@ public class ContainerService {
     }
     // fot addContent method
     public Container getLatestContainer(String publicationId, String containerId){
+        log.info("ContainerService - getLatestContainer");
         Container latestContainer = containerClient.getLatestContainer(publicationId, containerId);
         return latestContainer;
     }

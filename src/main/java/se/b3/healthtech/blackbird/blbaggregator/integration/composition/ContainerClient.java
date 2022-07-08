@@ -93,13 +93,14 @@ public class ContainerClient extends BaseClient {
 
     // for addContent
     public Container getLatestContainer(String key, String containerId) {
-        MultiValueMap<String, String> parameters = createParameterKey(key);
+        log.info("get latest container with key:{}", key);
+
+        MultiValueMap<String, String> parameters = createParameterKey(key, containerId);
 
         return compositionWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(URI_CONTAINER_GET_ONE)
                         .queryParams(parameters)
-                        .queryParam("containerId", containerId)
                         .build())
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
@@ -110,4 +111,6 @@ public class ContainerClient extends BaseClient {
                 })
                 .block();
     }
+
+
 }

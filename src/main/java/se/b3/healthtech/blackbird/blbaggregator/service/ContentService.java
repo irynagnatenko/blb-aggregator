@@ -34,9 +34,8 @@ public class ContentService {
         contentClient.postContent(key, contents);
     }
 
-    public List<Content> getLatestContent(String key){
-
-        return contentClient.getLatestContent(key);
+    public List<Content> getLatestContentList(String key){
+        return contentClient.getLatestContentList(key);
     }
 
     public void addContent(String userName, String publicationId, String containerId, Optional<String> parentId, CreateContentRequest contentRequest) {
@@ -74,7 +73,7 @@ public class ContentService {
         // We wait for all threads to be ready
         log.info("createContent(): waiting for threads to complete");
         combinedFuture.join();
-        log.info("createContent(): threads are complet");
+        log.info("createContent(): threads are complete");
 
     }
 
@@ -99,7 +98,7 @@ public class ContentService {
     public void updateContent(String userName, String publicationId, CreateContentRequest contentRequest) {
         long created = ServiceUtil.setCreatedTime();
         // get latest content-objekt
-        List<Content> latestContentList = getLatestContent(publicationId);
+        List<Content> latestContentList = getLatestContentList(publicationId);
         //List<Content> latestContentList = getLatestContent(publicationId, contentRequest.id());
         Content contentToUpdate = latestContentList.get(0);
 
@@ -111,5 +110,53 @@ public class ContentService {
 
         //insert content
         contentClient.addContentObject(publicationId, contentToUpdate);
+    }
+
+    public void deleteContent(String userName, String publicationId, String containerId, String contentId) {
+        // Hämta med asynkrona anrop(CompletableFuture) upp en instans av varje:
+        //Container via anrop containerServie.getContainer
+        log.info("deleteContent: getLatestContainer init");
+        Container container = containerService.getLatestContainer(publicationId, containerId);
+        log.info("deleteContent: getLatestContainer finish");
+        log.info("deleteContent: getLatestContainerObject init");
+
+        //ContainerObject via anrop containerObjectService.getContainerObject
+        ContainerObject containerObject = containerObjectService.getContainerObject(publicationId, contentId);
+        log.info("deleteContent: getLatestContainerObject finish");
+        log.info("deleteContent: getContent init");
+
+        //Content getContent
+//        Content content = contentClient.getContent(publicationId, contentId);
+        List<Content> contentList = contentClient.getLatestContentList(publicationId);
+        log.info("deleteContent: getContent finish");
+
+        log.info("deleteContent: deleteContainerObjectsIds init");
+        //Ta bort containerObjectId från listan av containObjectIds i ContainerObjektet
+        containerObjectService.deleteContainerObjectsIds(container, containerObject);
+        log.info("deleteContent: deleteContainerObjectsIds finish");
+
+        log.info("deleteContent: combinedFuture init");
+        CompletableFuture<Void> combinedFuture;
+        log.info("deleteContent: before combinedFuture 1");
+        //Anropa Compositiontjänsten för att uppdatera Container-objektet
+        CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> containerService.addContainer(publicationId, container));
+        log.info("deleteContent: before combinedFuture 2");
+        //Anropa Compostiontjänsten för att ta bort ContainerObject-objektet
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() ->containerObjectService.deleteContainerObject(publicationId, userName, containerObject));
+        log.info("deleteContent: before combinedFuture 3");
+        //Anropa Contenttjänsten för att ta bort Content-tjänsten
+        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> deleteContent(publicationId, userName, contentList));
+
+        combinedFuture = CompletableFuture.allOf(future1, future2, future3);
+
+        // We wait for all threads to be ready
+        log.info("deleteContent(): waiting for threads to complete");
+        combinedFuture.join();
+        log.info("deleteContent(): threads are complete");
+    }
+
+    public void deleteContent(String publicationId,String userName, List<Content> contentList){
+        log.info("In deleteContent method");
+        contentClient.deleteContent(publicationId, userName, contentList);
     }
 }

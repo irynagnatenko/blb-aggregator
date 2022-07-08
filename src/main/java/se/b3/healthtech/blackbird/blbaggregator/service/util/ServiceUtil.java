@@ -7,7 +7,6 @@ import se.b3.healthtech.blackbird.blbaggregator.domain.content.Content;
 import se.b3.healthtech.blackbird.blbaggregator.exception.ContainerNotFoundException;
 import se.b3.healthtech.blackbird.blbaggregator.exception.ContainerObjectNotFoundException;
 import se.b3.healthtech.blackbird.blbaggregator.exception.ContentNotFoundException;
-import se.b3.healthtech.blackbird.blbaggregator.template.model.TemplateContainer;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
