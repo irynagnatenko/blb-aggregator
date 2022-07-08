@@ -3,6 +3,7 @@ package se.b3.healthtech.blackbird.blbaggregator.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.ContainerObject;
 import se.b3.healthtech.blackbird.blbaggregator.integration.composition.ContainerObjectClient;

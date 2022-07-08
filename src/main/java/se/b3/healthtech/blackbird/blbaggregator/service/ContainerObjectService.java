@@ -51,7 +51,7 @@ public class ContainerObjectService {
 
     // TODO: enhets test på den
     //Ta bort containerObjectId från listan av containObjectIds i ContainerObjektet
-    public void ç(Container container, ContainerObject containerObject) {
+    public void deleteContainerObjectsIds(Container container, ContainerObject containerObject) {
         log.info("deleteContainerObjectsIds init");
         List<String> originalList = container.getContainerObjectsList();
         log.info("initial ContainerObjectsIds " + originalList);
