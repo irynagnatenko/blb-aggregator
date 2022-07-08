@@ -1,12 +1,11 @@
-package se.b3.healthtech.blackbird.blbaggregator.integration.composition;
+package se.b3.healthtech.blackbird.blbaggregator.integration.content;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Service
-public class BaseClient {
-
+public class BaseClientContent {
     MultiValueMap<String, String> createParameterKey(String key) {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("key", key);
@@ -20,4 +19,6 @@ public class BaseClient {
 
         return parameters;
     }
+
+
 }

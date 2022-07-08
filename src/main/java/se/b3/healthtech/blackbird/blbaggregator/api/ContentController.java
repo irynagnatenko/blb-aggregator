@@ -50,7 +50,7 @@ public class ContentController {
                             schema = @Schema(implementation = Void.class))}),
             @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
-    @PutMapping(path = "/update/",
+    @PutMapping(path = "/",
             produces = "application/json")
     @ResponseStatus(value = HttpStatus.OK)
     public void updateContent(@RequestHeader String userName,
@@ -58,6 +58,25 @@ public class ContentController {
                               @RequestBody CreateContentRequest contentRequest) {
         log.info("in the update content method");
         contentService.updateContent(userName, publicationId, contentRequest);
+
+    }
+    @Operation(summary = "Delete content")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted the content",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class))}),
+            @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
+    @PostMapping(path = "/delete",
+            headers = "userName",
+            produces = "application/json")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void updateContent(@RequestHeader("userName") String userName,
+                              @RequestParam String publicationId,
+                              @RequestParam String containerId,
+                              @RequestParam String contentId) {
+        log.info("in the delete content method");
+        contentService.deleteContent(userName, publicationId, containerId, contentId);
 
     }
 }

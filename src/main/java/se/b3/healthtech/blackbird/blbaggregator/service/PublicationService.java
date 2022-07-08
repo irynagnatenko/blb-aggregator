@@ -106,7 +106,7 @@ public class PublicationService {
         Publication publication = publicationClient.getLatestPublication(key);
         List<Container> containerList = containerService.getLatestContainers(key);
         List<ContainerObject> containerObjectsList = containerObjectService.getLatestContainerObjects(key);
-        List<Content> contentList = contentService.getLatestContent(key);
+        List<Content> contentList = contentService.getLatestContentList(key);
 
         PublicationResponse latestPublicationResponse = new PublicationResponse(publication, containerList, containerObjectsList, contentList);
         return latestPublicationResponse;
