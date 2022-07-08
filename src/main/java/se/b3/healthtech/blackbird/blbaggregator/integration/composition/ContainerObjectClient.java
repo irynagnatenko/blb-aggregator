@@ -120,7 +120,7 @@ public class ContainerObjectClient extends BaseClient {
     //List<ContainerObjects>
     //Anropar endpoint - deleteContainerObjects
     //returnerar void
-    public void deleteContainerObject(String key, String userName, ContainerObject containerObject) {
+    public void deleteContainerObject(String key, String userName, List<ContainerObject> containerObjectList) {
         log.info("delete latest container object with key:{}", key);
 
         MultiValueMap<String, String> parameters = createParameterKey(key);
@@ -131,7 +131,7 @@ public class ContainerObjectClient extends BaseClient {
                         .queryParams(parameters)
                         .build())
                 .header("userName", userName)
-                .body(Mono.just(containerObject), ContainerObject.class)
+                .body(Mono.just(containerObjectList), List.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
                         error -> Mono.error(new RuntimeException("Delete container object API not found")))

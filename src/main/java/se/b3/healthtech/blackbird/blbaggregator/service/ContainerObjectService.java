@@ -45,8 +45,8 @@ public class ContainerObjectService {
         return latestContainerObject;
     }
 
-    public void deleteContainerObject(String publicationId, String userName, ContainerObject containerObject) {
-        containerObjectClient.deleteContainerObject(publicationId, userName, containerObject);
+    public void deleteContainerObject(String publicationId, String userName, List<ContainerObject> containerObjectList) {
+        containerObjectClient.deleteContainerObject(publicationId, userName, containerObjectList);
     }
 
     // TODO: enhets test på den

@@ -10,6 +10,7 @@ import se.b3.healthtech.blackbird.blbaggregator.integration.content.ContentClien
 import se.b3.healthtech.blackbird.blbaggregator.service.util.ContentUtil;
 import se.b3.healthtech.blackbird.blbaggregator.service.util.ServiceUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -122,12 +123,17 @@ public class ContentService {
 
         //ContainerObject via anrop containerObjectService.getContainerObject
         ContainerObject containerObject = containerObjectService.getContainerObject(publicationId, contentId);
+        List<ContainerObject> containerObjectList = new ArrayList<>();
+        containerObjectList.add(containerObject);
         log.info("deleteContent: getLatestContainerObject finish");
         log.info("deleteContent: getContent init");
 
         //Content getContent
-//        Content content = contentClient.getContent(publicationId, contentId);
-        List<Content> contentList = contentClient.getLatestContentList(publicationId);
+        Content content = contentClient.getContent(publicationId, contentId);
+        List<Content> contentList= new ArrayList<>();
+        contentList.add(content);
+
+//        List<Content> contentList = contentClient.getLatestContentList(publicationId);
         log.info("deleteContent: getContent finish");
 
         log.info("deleteContent: deleteContainerObjectsIds init");
@@ -142,7 +148,7 @@ public class ContentService {
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> containerService.addContainer(publicationId, container));
         log.info("deleteContent: before combinedFuture 2");
         //Anropa Compostiontjänsten för att ta bort ContainerObject-objektet
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() ->containerObjectService.deleteContainerObject(publicationId, userName, containerObject));
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() ->containerObjectService.deleteContainerObject(publicationId, userName, containerObjectList));
         log.info("deleteContent: before combinedFuture 3");
         //Anropa Contenttjänsten för att ta bort Content-tjänsten
         CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> deleteContent(publicationId, userName, contentList));

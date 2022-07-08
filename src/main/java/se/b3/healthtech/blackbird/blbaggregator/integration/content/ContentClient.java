@@ -110,9 +110,6 @@ public class ContentClient extends BaseClientContent {
 
     public void deleteContent(String key, String userName, List<Content> contentList) {
         log.info("deleteContentClient with a key {}: ", key);
-        log.info("contentId: ", contentList.get(0));
-        log.info("contentId: ", contentList.get(1));
-        log.info("contentId: ", contentList.get(2));
 
         MultiValueMap<String, String> parameters = createParameterKey(key);
 
@@ -122,7 +119,7 @@ public class ContentClient extends BaseClientContent {
                         .queryParams(parameters)
                         .build())
                 .header("userName", userName)
-                .body(Mono.just(contentList), Content.class)
+                .body(Mono.just(contentList), List.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
                         error -> Mono.error(new RuntimeException("Delete content API not found")))
@@ -131,7 +128,7 @@ public class ContentClient extends BaseClientContent {
                 .bodyToMono(Void.class)
                 .log()
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
-                //.block();
-                .subscribe();
+                .block();
+
     }
 }
