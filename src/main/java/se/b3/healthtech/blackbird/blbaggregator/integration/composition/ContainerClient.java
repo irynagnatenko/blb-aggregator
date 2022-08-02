@@ -20,7 +20,7 @@ public class ContainerClient extends BaseClient {
     private static final String URI_CONTAINER_ADD_ALL = "/api-birdspecies/container/all/";
     private static final String URI_CONTAINER_ADD_ONE = "/api-birdspecies/container/";
     private static final String URI_CONTAINER_GET_ONE = "/api-birdspecies/container/";
-
+    private static final String URI_CONTAINER_DELETE = "/api-birdspecies/container/delete/";
 
     private final WebClient compositionWebClient;
 
@@ -112,5 +112,27 @@ public class ContainerClient extends BaseClient {
                 .block();
     }
 
+// TODO: should it be delete method?
+    public void deleteContainer(String key, String userName, List<Container> containerList) {
+        log.info("deleteContentClient with a key {}: ", key);
 
+        MultiValueMap<String, String> parameters = createParameterKey(key);
+
+        compositionWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTAINER_DELETE)
+                        .queryParams(parameters)
+                        .build())
+                .header("userName", userName)
+                .body(Mono.just(containerList), List.class)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Delete container API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(Void.class)
+                .log()
+                .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
+                .block();
+    }
 }

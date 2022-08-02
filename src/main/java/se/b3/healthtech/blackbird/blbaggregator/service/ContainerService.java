@@ -3,8 +3,11 @@ package se.b3.healthtech.blackbird.blbaggregator.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Container;
+import se.b3.healthtech.blackbird.blbaggregator.domain.composite.ContainerObject;
+import se.b3.healthtech.blackbird.blbaggregator.domain.content.Content;
 import se.b3.healthtech.blackbird.blbaggregator.integration.composition.ContainerClient;
 import se.b3.healthtech.blackbird.blbaggregator.integration.composition.ContainerObjectClient;
+import se.b3.healthtech.blackbird.blbaggregator.integration.content.ContentClient;
 import se.b3.healthtech.blackbird.blbaggregator.service.util.ServiceUtil;
 
 import java.util.*;
@@ -17,12 +20,14 @@ import static se.b3.healthtech.blackbird.blbaggregator.service.util.ServiceUtil.
 public class ContainerService {
 
     private final ContainerClient containerClient;
+    private final ContainerObjectClient containerObjectClient;
+    private final ContentClient contentClient;
 
-
-    public ContainerService(ContainerClient containerClient, ContainerObjectClient containerObjectClient, ContainerObjectService containerObjectService) {
+    public ContainerService(ContainerClient containerClient, ContainerObjectClient containerObjectClient, ContentClient contentClient) {
         this.containerClient = containerClient;
+        this.containerObjectClient = containerObjectClient;
+        this.contentClient = contentClient;
     }
-
 
     public void addContainers(String key, List<Container> containers) {
         containerClient.postContainers(key, containers);
@@ -62,7 +67,7 @@ public class ContainerService {
         }
 
         container = createNewContainer(userName, created, newContainerOrdinalNr);
-        log.info("createPublication(): create new container");
+        log.info("addContainer(): create new container");
 
         //Uppdatera ordinalNr för resten av containrar (ska räknas upp med ett för varje container)
         updatedContainers = updateOrdinal(latestContainers, newContainerOrdinalNr);
@@ -77,9 +82,9 @@ public class ContainerService {
         combinedFuture = CompletableFuture.allOf(future1, future2);
 
         // We wait for all threads to be ready
-        log.info("createPublication(): waiting for threads to complete");
+        log.info("addContainer(): waiting for threads to complete");
         combinedFuture.join();
-        log.info("createPublication(): threads are complete");
+        log.info("addContainer(): threads are complete");
 
     }
 
@@ -130,5 +135,43 @@ public class ContainerService {
     public void addContainer(String publicationId, Container container) {
         containerClient.addContainer(publicationId, container);
     }
+
+    public void deleteContainers(String userName, String publicationId, String containerId) {
+        //TODO: menar du container eller containerObject???
+        //Hämta upp ett containerObjekt från CompositionTjänsten med skicka in key och containerId. Asynkront anrop
+        //Lägg till ContainerObjektet i en List<Container>
+        //GET-TJÄNSTER
+        Container container = containerClient.getLatestContainer(publicationId, containerId);
+        List<Container> containerList = new ArrayList<>();
+        containerList.add(container);
+
+        //Hämta ut listan av containerObjectIds från ContainerObjektet
+        List<String> containerObjectIds = container.getContainerObjectsList();
+        log.info("listan av containerObjectIds från ContainerObjektet " + containerObjectIds);
+
+        //Anropa compositiontjänsten för att hämta upp alla ContainerObject som finns i listan av containerObjectIds (Ett asynkront anrop till tjänsten)
+        List<ContainerObject> containerObjectsByUuids = containerObjectClient.getContainerObjectsByUuids(publicationId, containerObjectIds);
+        //Anropa contentjänsten för att hämta upp alla Content som finns i listan av containerObjectIds (Ett asynkront anrop till tjänsten)
+        List<Content> contentsByUuids = contentClient.getContentsByUuids(publicationId, containerObjectIds);
+        //Alla anrop för att hämta upp objekt ska ske med asynkron logik enligt tidigare implementationer.
+
+        //Ta bort container genom att anropa endpoint - deleteContainers i compositetjänsten (finns inte klienten för detta ska en delete-metod skapas i klienten
+        //Ta bort alla upplästa containerObjects genom att anropa endpoint - deleteContainerObjects i compositetjänsten
+        //Ta bort alla upplästa content genom att anropa endpoint- deleteContents i Contenttjänsten.
+        //Alla anrop för att ta bort objekt ska ske med asynkron logik enligt tidigare implementationer.
+        CompletableFuture<Void> combinedFuture;
+        CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> containerClient.deleteContainer(publicationId, userName, containerList));
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> containerObjectClient.deleteContainerObject(publicationId, userName, containerObjectsByUuids));
+        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> contentClient.deleteContent(publicationId, userName, contentsByUuids));
+
+        combinedFuture = CompletableFuture.allOf(future1, future2, future3);
+
+        // We wait for all threads to be ready
+        log.info("deleteContainers(): waiting for threads to complete a delete");
+        combinedFuture.join();
+        log.info("deleteContainers(): delete threads are complete");
+
+    }
+
 }
 

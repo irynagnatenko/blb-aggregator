@@ -42,4 +42,23 @@ public class ContainerController {
         containerService.addContainer(publicationId, parentId, userName);
 
     }
+    @Operation(summary = "Delete containers in the publication")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted containers",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class))}),
+            @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
+    @DeleteMapping (path = "/",
+            headers = "userName",
+            params = {"publicationId", "containerId"},
+            produces = "application/json")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteContainers(@RequestHeader("userName") String userName,
+                                @RequestParam ("publicationId") String publicationId,
+                                @RequestParam ("containerId") String containerId) {
+        log.info("in the delete container method");
+        containerService.deleteContainers(userName, publicationId, containerId);
+
+    }
 }

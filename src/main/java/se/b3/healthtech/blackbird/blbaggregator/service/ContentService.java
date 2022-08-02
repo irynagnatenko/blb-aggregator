@@ -133,7 +133,6 @@ public class ContentService {
         List<Content> contentList= new ArrayList<>();
         contentList.add(content);
 
-//        List<Content> contentList = contentClient.getLatestContentList(publicationId);
         log.info("deleteContent: getContent finish");
 
         log.info("deleteContent: deleteContainerObjectsIds init");
