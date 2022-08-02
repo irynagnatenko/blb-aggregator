@@ -49,7 +49,6 @@ public class ContainerObjectService {
         containerObjectClient.deleteContainerObject(publicationId, userName, containerObjectList);
     }
 
-    // TODO: enhets test på den
     //Ta bort containerObjectId från listan av containObjectIds i ContainerObjektet
     public void deleteContainerObjectsIds(Container container, ContainerObject containerObject) {
         log.info("deleteContainerObjectsIds init");
@@ -68,9 +67,7 @@ public class ContainerObjectService {
         for (int i = 0; i < originalList.size(); i++) {
             if (originalList.get(i).equals(containerObject.getUuid())) {
                 originalList.remove(i);
-                log.info("i " + i);
             }
-
  */
         log.info("new list after stream " + originalList);
 

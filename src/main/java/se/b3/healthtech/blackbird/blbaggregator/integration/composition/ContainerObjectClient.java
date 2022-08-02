@@ -9,7 +9,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.ContainerObject;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Publication;
-import se.b3.healthtech.blackbird.blbaggregator.domain.content.Content;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class ContainerObjectClient extends BaseClient {
     private static final String URI_CONTAINER_OBJECT_ADD_ONE = "api-blackbird/containerobject/";
     private static final String URI_CONTAINER_OBJECT_GET_ONE = "api-blackbird/containerobject/";
     private static final String URI_CONTAINER_OBJECT_DELETE = "api-blackbird/containerobject/";
-
+    private static final String URI_CONTAINER_OBJECT_GET_BY_ID = "api-blackbird/containerobject/selected/";
 
     private final WebClient compositionWebClient;
 
@@ -120,7 +119,7 @@ public class ContainerObjectClient extends BaseClient {
     //List<ContainerObjects>
     //Anropar endpoint - deleteContainerObjects
     //returnerar void
-    public void deleteContainerObject(String key, String userName, List<ContainerObject> containerObjectList) {
+    public void deleteContainerObject(String key, String userName, List<ContainerObject> uuids) {
         log.info("delete latest container object with key:{}", key);
 
         MultiValueMap<String, String> parameters = createParameterKey(key);
@@ -131,10 +130,10 @@ public class ContainerObjectClient extends BaseClient {
                         .queryParams(parameters)
                         .build())
                 .header("userName", userName)
-                .body(Mono.just(containerObjectList), List.class)
+                .body(Mono.just(uuids), List.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                        error -> Mono.error(new RuntimeException("Delete container object API not found")))
+                        error -> Mono.error(new RuntimeException("Delete containerObject API not found")))
                 .onStatus(HttpStatus::is5xxServerError,
                         error -> Mono.error(new RuntimeException("Server is not responding")))
                 .bodyToMono(Void.class)
@@ -143,6 +142,25 @@ public class ContainerObjectClient extends BaseClient {
                 .block();
     }
 
+    public List<ContainerObject> getContainerObjectsByUuids(String key, List<String> containerObjectIds) {
+        log.info("get container objects by uuid object with key:{}", key);
+        log.info("Lista " + containerObjectIds.size() + " " + containerObjectIds);
+
+        return compositionWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTAINER_OBJECT_GET_BY_ID)
+                        .queryParam("key", key)
+                        .replaceQueryParam("uuids", containerObjectIds)
+                        .build())
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("getContainerObjectsByUuids API not found getLatestContainerObjects")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(new ParameterizedTypeReference<List<ContainerObject>>() {
+                })
+                .block();
+    }
 }
 
 

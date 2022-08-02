@@ -20,6 +20,7 @@ public class ContentClient extends BaseClientContent {
     private static final String URI_CONTENT_ADD_ONE = "/api-birdspecies/content/";
     private static final String URI_CONTENT_GET_ONE = "/api-birdspecies/content/";
     private static final String URI_CONTENT_DELETE = "/api-birdspecies/content/";
+    private static final String URI_CONTENT_GET_BY_ID = "/api-birdspecies/content/selected/";
 
     private final WebClient contentWebClient;
 
@@ -108,7 +109,7 @@ public class ContentClient extends BaseClientContent {
                 .block();
     }
 
-    public void deleteContent(String key, String userName, List<Content> contentList) {
+    public void deleteContent(String key, String userName, List<Content> uuids) {
         log.info("deleteContentClient with a key {}: ", key);
 
         MultiValueMap<String, String> parameters = createParameterKey(key);
@@ -119,7 +120,7 @@ public class ContentClient extends BaseClientContent {
                         .queryParams(parameters)
                         .build())
                 .header("userName", userName)
-                .body(Mono.just(contentList), List.class)
+                .body(Mono.just(uuids), List.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
                         error -> Mono.error(new RuntimeException("Delete content API not found")))
@@ -131,4 +132,26 @@ public class ContentClient extends BaseClientContent {
                 .block();
 
     }
+
+    public List<Content> getContentsByUuids(String key, List<String> contentObjectIds) {
+        log.info("get content by uuid with key:{}", key);
+        log.info("Lista " + contentObjectIds.size() + " " + contentObjectIds);
+
+        return contentWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_CONTENT_GET_BY_ID)
+                        .queryParam("key", key)
+                        .replaceQueryParam("uuids", contentObjectIds)
+                        .build())
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("getContentsByUuids API not found getContent")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(new ParameterizedTypeReference<List<Content>>() {
+                })
+                .block();
+    }
+
 }
+
