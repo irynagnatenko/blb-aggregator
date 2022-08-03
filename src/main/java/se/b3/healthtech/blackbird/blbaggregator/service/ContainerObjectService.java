@@ -63,12 +63,6 @@ public class ContainerObjectService {
                 .forEach(newList::add);
         originalList.removeAll(newList);
 
-            /*
-        for (int i = 0; i < originalList.size(); i++) {
-            if (originalList.get(i).equals(containerObject.getUuid())) {
-                originalList.remove(i);
-            }
- */
         log.info("new list after stream " + originalList);
 
     }

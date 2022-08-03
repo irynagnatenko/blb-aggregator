@@ -112,7 +112,6 @@ public class ContainerClient extends BaseClient {
                 .block();
     }
 
-// TODO: should it be delete method?
     public void deleteContainer(String key, String userName, List<Container> containerList) {
         log.info("deleteContentClient with a key {}: ", key);
 

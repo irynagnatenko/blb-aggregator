@@ -35,7 +35,7 @@ public class ContentService {
         contentClient.postContent(key, contents);
     }
 
-    public List<Content> getLatestContentList(String key){
+    public List<Content> getLatestContentList(String key) {
         return contentClient.getLatestContentList(key);
     }
 
@@ -65,9 +65,9 @@ public class ContentService {
         //Uppdatera container med nytt containerObjectId i listan - containerService.addContainer(String publicationId, Container container)
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> containerService.addContainer(publicationId, latestContainer));
         //Skapa nytt containerObject - containerObjectService.addContainerObject(String publicationId, ContainerObject containerObject)
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() ->containerObjectService.addContainerObject(publicationId,containerObject));
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> containerObjectService.addContainerObject(publicationId, containerObject));
         //Skapa nytt content - contentClient.addContent(String publicationId, Content content)
-        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> addContent(publicationId,content));
+        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> addContent(publicationId, content));
 
         combinedFuture = CompletableFuture.allOf(future1, future2, future3);
 
@@ -78,7 +78,7 @@ public class ContentService {
 
     }
 
-    private Content createContent(String uuid, long created, String userName, CreateContentRequest request){
+    private Content createContent(String uuid, long created, String userName, CreateContentRequest request) {
         Content newContent = new Content();
         newContent.setUuid(uuid);
         newContent.setCreatedBy(userName);
@@ -92,7 +92,7 @@ public class ContentService {
         return newContent;
     }
 
-    public void addContent(String publicationId,Content content){
+    public void addContent(String publicationId, Content content) {
         contentClient.addContentObject(publicationId, content);
     }
 
@@ -130,7 +130,7 @@ public class ContentService {
 
         //Content getContent
         Content content = contentClient.getContent(publicationId, contentId);
-        List<Content> contentList= new ArrayList<>();
+        List<Content> contentList = new ArrayList<>();
         contentList.add(content);
 
         log.info("deleteContent: getContent finish");
@@ -147,7 +147,7 @@ public class ContentService {
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> containerService.addContainer(publicationId, container));
         log.info("deleteContent: before combinedFuture 2");
         //Anropa Compostiontjänsten för att ta bort ContainerObject-objektet
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() ->containerObjectService.deleteContainerObject(publicationId, userName, containerObjectList));
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> containerObjectService.deleteContainerObject(publicationId, userName, containerObjectList));
         log.info("deleteContent: before combinedFuture 3");
         //Anropa Contenttjänsten för att ta bort Content-tjänsten
         CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> deleteContent(publicationId, userName, contentList));
@@ -160,7 +160,7 @@ public class ContentService {
         log.info("deleteContent(): threads are complete");
     }
 
-    public void deleteContent(String publicationId,String userName, List<Content> contentList){
+    public void deleteContent(String publicationId, String userName, List<Content> contentList) {
         log.info("In deleteContent method");
         contentClient.deleteContent(publicationId, userName, contentList);
     }

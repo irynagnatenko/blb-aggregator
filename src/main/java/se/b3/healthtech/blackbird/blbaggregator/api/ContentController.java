@@ -33,13 +33,13 @@ public class ContentController {
     @PostMapping(path = "/",
             produces = "application/json")
     @ResponseStatus(value = HttpStatus.OK)
-    public void createContent( @RequestHeader String userName,
-                                @RequestParam String publicationId,
-                                @RequestParam String containerId,
-                                @RequestParam Optional<String> parentId,
-                                @RequestBody CreateContentRequest contentRequest) {
+    public void createContent(@RequestHeader String userName,
+                              @RequestParam String publicationId,
+                              @RequestParam String containerId,
+                              @RequestParam Optional<String> parentId,
+                              @RequestBody CreateContentRequest contentRequest) {
         log.info("in the create container method");
-        contentService.addContent(userName, publicationId, containerId, parentId, contentRequest );
+        contentService.addContent(userName, publicationId, containerId, parentId, contentRequest);
 
     }
 
@@ -60,6 +60,7 @@ public class ContentController {
         contentService.updateContent(userName, publicationId, contentRequest);
 
     }
+
     @Operation(summary = "Delete content")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the content",

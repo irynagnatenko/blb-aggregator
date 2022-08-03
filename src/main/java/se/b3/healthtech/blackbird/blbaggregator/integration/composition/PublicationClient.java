@@ -8,12 +8,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import se.b3.healthtech.blackbird.blbaggregator.domain.composite.Publication;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class PublicationClient extends BaseClient {
 
     private static final String URI_COMPOSITION_POST = "/api-birdspecies/publication/";
     private static final String URI_COMPOSITION_GET = "/api-birdspecies/publication/";
+    private static final String URI_COMPOSITION_DELETE = "/api-birdspecies/publication/delete/";
 
     private final WebClient compositionWebClient;
 
@@ -27,10 +30,10 @@ public class PublicationClient extends BaseClient {
                 .uri(URI_COMPOSITION_POST)
                 .body(Mono.just(publication), Publication.class)
                 .retrieve()
-                    .onStatus(HttpStatus::is4xxClientError,
-                            error -> Mono.error(new RuntimeException("Publication API not found")))
-                    .onStatus(HttpStatus::is5xxServerError,
-                            error -> Mono.error(new RuntimeException("Server is not responding")))
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Publication API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
                 .bodyToMono(Void.class)
                 .log()
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
@@ -54,6 +57,28 @@ public class PublicationClient extends BaseClient {
                 .block();
     }
 
+    public void deletePublication(String key, String userName, List<Publication> publicationList) {
+        log.info("deletePublication with a key {}: ", key);
+
+        MultiValueMap<String, String> parameters = createParameterKey(key);
+
+        compositionWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(URI_COMPOSITION_DELETE)
+                        .queryParams(parameters)
+                        .build())
+                .header("userName", userName)
+                .body(Mono.just(publicationList), List.class)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Delete publication API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
+                .bodyToMono(Void.class)
+                .log()
+                .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
+                .block();
+    }
 }
 
 

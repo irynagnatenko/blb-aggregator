@@ -38,8 +38,9 @@ public class ContainerService {
         latestContainers.sort(sortByOrdinal);
         return latestContainers;
     }
+
     // fot addContent method
-    public Container getLatestContainer(String publicationId, String containerId){
+    public Container getLatestContainer(String publicationId, String containerId) {
         log.info("ContainerService - getLatestContainer");
         Container latestContainer = containerClient.getLatestContainer(publicationId, containerId);
         return latestContainer;
@@ -99,7 +100,6 @@ public class ContainerService {
         return newContainer;
 
     }
-    //* sätta latest på den nya containern
 
     public List<Container> updateOrdinal(List<Container> containersList, int newContainerOrdinalNr) {
         List<Container> updatedContainerList = new ArrayList<>();
@@ -122,7 +122,7 @@ public class ContainerService {
         List<String> containerObjectListToUpdate = container.getContainerObjectsList();
 
         if (parentId.isPresent()) {
-            index = containerObjectListToUpdate.indexOf(parentId)+1;
+            index = containerObjectListToUpdate.indexOf(parentId) + 1;
         }
 
         containerObjectListToUpdate.add(index, uuid);
@@ -137,10 +137,8 @@ public class ContainerService {
     }
 
     public void deleteContainers(String userName, String publicationId, String containerId) {
-        //TODO: menar du container eller containerObject???
         //Hämta upp ett containerObjekt från CompositionTjänsten med skicka in key och containerId. Asynkront anrop
         //Lägg till ContainerObjektet i en List<Container>
-        //GET-TJÄNSTER
         Container container = containerClient.getLatestContainer(publicationId, containerId);
         List<Container> containerList = new ArrayList<>();
         containerList.add(container);

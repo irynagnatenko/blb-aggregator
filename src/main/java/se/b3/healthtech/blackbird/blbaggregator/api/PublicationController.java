@@ -42,22 +42,38 @@ public class PublicationController {
         return publicationService.createPublication(userName, templateId, title);
 
     }
+
     @Operation(summary = "Get latest publication for a specific partition key")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found publication", content = {@Content}),
             @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})   })
-    @GetMapping(value= "/",
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
+    @GetMapping(value = "/",
             params = "key",
             produces = {"application/json"})
     @ResponseStatus(value = HttpStatus.OK)
-    public PublicationResponse getLatestPublication(@RequestParam("key") String key){
+    public PublicationResponse getLatestPublication(@RequestParam("key") String key) {
         log.info("in PublicationController - getLatestPublication");
         return publicationService.getLatestPublication(key);
     }
 
+    @Operation(summary = "Delete a publication")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted publication",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
+    @DeleteMapping(path = "/",
+            headers = "userName",
+            params = "key",
+            produces = "application/json")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deletePublication(@RequestHeader("userName") String userName,
+                                  @RequestParam("key") String publicationId) {
+        publicationService.deletePublication(userName, publicationId);
 
-
+    }
 
 }
 
