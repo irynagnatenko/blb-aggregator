@@ -30,10 +30,10 @@ public class PublicationClient extends BaseClient {
                 .uri(URI_COMPOSITION_POST)
                 .body(Mono.just(publication), Publication.class)
                 .retrieve()
-                    .onStatus(HttpStatus::is4xxClientError,
-                            error -> Mono.error(new RuntimeException("Publication API not found")))
-                    .onStatus(HttpStatus::is5xxServerError,
-                            error -> Mono.error(new RuntimeException("Server is not responding")))
+                .onStatus(HttpStatus::is4xxClientError,
+                        error -> Mono.error(new RuntimeException("Publication API not found")))
+                .onStatus(HttpStatus::is5xxServerError,
+                        error -> Mono.error(new RuntimeException("Server is not responding")))
                 .bodyToMono(Void.class)
                 .log()
                 .doOnError(error -> log.error("An error has occurred {}", error.getMessage()))
@@ -56,8 +56,7 @@ public class PublicationClient extends BaseClient {
                 .bodyToMono(Publication.class)
                 .block();
     }
-    // TODO: should it be delete method?
-    //denna tjänst finns inte implementerad i compositionservice och måste implementeras. Görs på samma sätt som för de andra tjänsterna.
+
     public void deletePublication(String key, String userName, List<Publication> publicationList) {
         log.info("deletePublication with a key {}: ", key);
 

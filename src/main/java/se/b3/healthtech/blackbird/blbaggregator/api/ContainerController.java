@@ -36,12 +36,13 @@ public class ContainerController {
             produces = "application/json")
     @ResponseStatus(value = HttpStatus.OK)
     public void createContainer(@RequestHeader("userName") String userName,
-                                  @RequestParam ("publicationId") String publicationId,
-                                  @RequestParam ("parentId") Optional<String> parentId) {
+                                @RequestParam("publicationId") String publicationId,
+                                @RequestParam("parentId") Optional<String> parentId) {
         log.info("in the create container method");
         containerService.addContainer(publicationId, parentId, userName);
 
     }
+
     @Operation(summary = "Delete containers in the publication")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted containers",
@@ -49,14 +50,14 @@ public class ContainerController {
                             schema = @Schema(implementation = Void.class))}),
             @ApiResponse(responseCode = "404", description = "Object not found", content = {@Content}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content})})
-    @DeleteMapping (path = "/",
+    @DeleteMapping(path = "/",
             headers = "userName",
             params = {"publicationId", "containerId"},
             produces = "application/json")
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteContainers(@RequestHeader("userName") String userName,
-                                @RequestParam ("publicationId") String publicationId,
-                                @RequestParam ("containerId") String containerId) {
+                                 @RequestParam("publicationId") String publicationId,
+                                 @RequestParam("containerId") String containerId) {
         log.info("in the delete container method");
         containerService.deleteContainers(userName, publicationId, containerId);
 

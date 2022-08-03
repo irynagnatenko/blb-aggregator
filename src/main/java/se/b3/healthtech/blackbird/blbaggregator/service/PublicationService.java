@@ -49,7 +49,7 @@ public class PublicationService {
     public String createPublication(String userName, String templateId, String title) {
         log.info("createPublication:init");
         String key = UUID.randomUUID().toString();
-        long created =ServiceUtil.setCreatedTime();
+        long created = ServiceUtil.setCreatedTime();
 
         Template template = templateService.getTemplate(templateId);
         //Publication
@@ -61,13 +61,13 @@ public class PublicationService {
         setContentId(allTemplateContainerObjects);
 
         //Container
-        List<Container> containers = templateConverterService.mapToContainers(containerV2s, userName,  created);
+        List<Container> containers = templateConverterService.mapToContainers(containerV2s, userName, created);
 
         //ContainerObject
         List<ContainerObject> containerObjects = templateConverterService.mapToContainerObjectList(containerV2s, userName, created);
 
         //Content
-        List<Content> contents = templateConverterService.mapToContents(allTemplateContainerObjects,  userName, created);
+        List<Content> contents = templateConverterService.mapToContents(allTemplateContainerObjects, userName, created);
 
         setUuid(containers, containerObjects, contents);
 
@@ -111,6 +111,7 @@ public class PublicationService {
             newContainerObjectList.clear();
         });
     }
+
     public PublicationResponse getLatestPublication(String key) {
         Publication publication = publicationClient.getLatestPublication(key);
         List<Container> containerList = containerService.getLatestContainers(key);
